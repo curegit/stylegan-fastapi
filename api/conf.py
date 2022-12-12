@@ -1,8 +1,19 @@
 import tomllib
+from pydantic import BaseModel
 from api.util import file_rel_path
 
-filepath = file_rel_path("../conf.toml")
-
-def load():
+def load_config(filepath=file_rel_path("../config.toml")):
 	with open(filepath, "rb") as f:
-		return tomllib.load(f)
+		obj = tomllib.load(f)
+		return APIConfig(**obj)
+
+class ModelSection(BaseModel):
+	name: str
+	description: str | None = None
+	file: str
+
+class APIConfig(BaseModel):
+	title: str
+	version: str
+	description: str
+	models: dict[str, ModelSection]

@@ -1,0 +1,19 @@
+title = "StyleGAN API"
+version = "1.0.0"
+description = "画像生成"
+
+[http]
+cors = true
+
+[server]
+gpu = true
+buffer = true
+
+[models]
+  [models.mnist]
+  name = "MNIST"
+  file = "models/mnist.hdf5"
+
+  [models.kmnist]
+  name = "KMNIST"
+  file = "models/kmnist.hdf5"

@@ -8,9 +8,9 @@ def load_config(filepath=file_rel_path("../config.toml")):
 		return APIConfig(**obj)
 
 class ModelSection(BaseModel):
+	file: str
 	name: str
 	description: str | None = None
-	file: str
 
 class APIConfig(BaseModel):
 	title: str

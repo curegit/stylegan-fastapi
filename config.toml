@@ -11,9 +11,9 @@ buffer = true
 
 [models]
   [models.mnist]
-  name = "MNIST"
   file = "models/mnist.hdf5"
+  name = "MNIST"
 
   [models.kmnist]
-  name = "KMNIST"
   file = "models/kmnist.hdf5"
+  name = "KMNIST"

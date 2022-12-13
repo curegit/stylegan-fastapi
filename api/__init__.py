@@ -15,3 +15,14 @@ models = {
 	key: GeneratorModel.load(model.file, model.name, model.description) for key, model in config.models.items()
 }
 
+class StyleGANFastAPI(FastAPI):
+
+	def __init__(self, *,
+		debug: bool=False, title: str=config.title, description:str=config.description,version: str=config.version
+	):
+		super().__init__(
+			debug=debug,
+			title=title,
+			description=description,
+			version=version,
+		)

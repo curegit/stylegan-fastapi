@@ -1,12 +1,33 @@
+from chainer.backend import CpuDevice, GpuDevice
 from stylegan.networks import Generator
 from utilities.image import to_pil_image
+from api import config
+
+def get_device(gpu: bool | int = config.server.gpu):
+	if gpu is True:
+		return GpuDevice.from_device_id(0)
+	if gpu is False:
+		return CpuDevice()
+	if gpu >= 0:
+		return GpuDevice.from_device_id(gpu)
+	if gpu == -1:
+		return CpuDevice()
+	raise ValueError()
 
 class GeneratorModel():
 
-	def __init__(self, generator, name, description):
-		self.generator = generator
-		self.name = name
-		self.description = description
+	def __init__(
+			self,
+			generator: Generator,
+			name: str,
+			description: str,
+			gpu: bool | int | None = False
+		) -> None:
+			self.generator = generator
+			self.name = name
+			self.description = description
+			self.gpu = config.server.gpu if gpu is None else gpu
+
 
 	def __call__(self, *args, **kwargs):
 		return self.generator(*args, **kwargs)
@@ -14,7 +35,7 @@ class GeneratorModel():
 	def __getattr__(self, key):
 		return getattr(self.generator, key)
 
-	def generate_image(self, psi):
+	def generate_image(self, psi: float = 1.0):
 		z = self.generator.generate_latents(1)
 		c = self.generator.generate_conditions(1) if self.generator.conditional else None
 		ws, y = self.generator(z, c, psi=psi)
@@ -29,14 +50,17 @@ class GeneratorModel():
 			"depth": self.depth,
 			"levels": self.levels,
 			"channels": (self.first_channels, self.last_channels),
+			"name": self.name,
+			"description": self.description,
 			"conditional": self.conditional,
-			"categories": self.categories,
 			"labels": self.labels,
-			"width": self.resolution[1],
-			"height": self.resolution[0],
+			"width": self.width,
+			"height": self.height,
 		}
 
 	@staticmethod
-	def load(file, name, description):
+	def load(file: str, name: str, description: str, gpu: bool | int | None = None):
 		generator = Generator.load(file)
+		device = get_device() if gpu is None else get_device(gpu)
+		generator.to_device(device)
 		return GeneratorModel(generator, name, description)

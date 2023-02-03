@@ -1,9 +1,11 @@
+from typing import Self
 from chainer.backend import CpuDevice, GpuDevice
 from stylegan.networks import Generator
 from utilities.image import to_pil_image
 from api import config
+from api.schemas import Model
 
-def get_device(gpu: bool | int = config.server.gpu):
+def get_device(gpu: bool | int = config.server.gpu) -> CpuDevice | GpuDevice:
 	if gpu is True:
 		return GpuDevice.from_device_id(0)
 	if gpu is False:
@@ -17,16 +19,18 @@ def get_device(gpu: bool | int = config.server.gpu):
 class GeneratorModel():
 
 	def __init__(
-			self,
-			generator: Generator,
-			name: str,
-			description: str,
-			gpu: bool | int | None = False
-		) -> None:
-			self.generator = generator
-			self.name = name
-			self.description = description
-			self.gpu = config.server.gpu if gpu is None else gpu
+		self,
+		generator: Generator,
+		id: str,
+		name: str,
+		description: str,
+		#gpu: bool | int | None = False
+	) -> None:
+		self.generator = generator
+		self.id = id
+		self.name = name
+		self.description = description
+		#self.gpu = config.server.gpu if gpu is None else gpu
 
 
 	def __call__(self, *args, **kwargs):
@@ -44,23 +48,20 @@ class GeneratorModel():
 		return z, ws, pil_img
 
 	@property
-	def spec_dict(self):
-		return {
-			"size": self.size,
-			"depth": self.depth,
-			"levels": self.levels,
-			"channels": (self.first_channels, self.last_channels),
-			"name": self.name,
-			"description": self.description,
-			"conditional": self.conditional,
-			"labels": self.labels,
-			"width": self.width,
-			"height": self.height,
-		}
+	def spec(self) -> Model:
+		return Model(
+			id=self.id,
+			name=self.name,
+			description=self.description,
+			conditional=self.conditional,
+			labels=(self.labels or None),
+			width=self.width,
+			height=self.height
+		)
 
 	@staticmethod
-	def load(file: str, name: str, description: str, gpu: bool | int | None = None):
-		generator = Generator.load(file)
+	def load(filepath: str, id: str, name: str, description: str, gpu: bool | int | None = None) -> Self:
+		generator = Generator.load(filepath)
 		device = get_device() if gpu is None else get_device(gpu)
 		generator.to_device(device)
-		return GeneratorModel(generator, name, description)
+		return GeneratorModel(generator, id, name, description)

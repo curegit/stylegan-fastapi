@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from api import models
-from api.schemas.model import Model
+from api.schemas import Model
 
 router = APIRouter(tags=["info"])
 
@@ -8,10 +8,6 @@ router = APIRouter(tags=["info"])
 def hello():
 	return {"": ""}
 
-@router.get("/list")
-def model_list():
-	return {key: model.name for key, model in models.items()}
-
-@router.get("/models", response_model=dict[str, Model])
+@router.get("/models/", response_model=list[Model])
 def model_specs():
-	return {key: model.spec_dict for key, model in models.items()}
+	return [model.spec for model in models.values()]

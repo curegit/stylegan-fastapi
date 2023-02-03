@@ -1,23 +1,27 @@
-# コアモジュールにパスを通す
-import sys
-from api import util
-sys.path.insert(0, str(util.file_rel_path("../core")))
-
-# アプリケーション構成を読み取る
 from api import conf
-config = conf.load_config()
+from api import util
 
-# 使用する生成器をすべてロード
-from api.model import GeneratorModel
+# Add the StyleGAN core to the Python module path
+import sys
+sys.path.insert(0, str(util.file_rel_path("../core")))
+del sys
+
+# Read configuration and define at top level
+import os
+config = conf.load_config(os.getenv("STYLEGAN_TOML", default=util.file_rel_path("../config.toml")))
+del os
+
+# Load all generator models in use
+from api import model
 models = {
-	key: GeneratorModel.load(
-		model.file,
-		model.name,
-		model.description,
-		model.gpu
-	) for key, model in config.models.items()
+	key: model.GeneratorModel.load(
+		val.file,
+		val.name,
+		val.description,
+		val.gpu
+	) for key, val in config.models.items()
 }
 
-# エイリアスを張る
+# Export main interfaces
 from api import api
 StyleGANFastAPI = api.StyleGANFastAPI

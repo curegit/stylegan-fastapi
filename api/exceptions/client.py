@@ -1,5 +1,5 @@
 from api.exceptions import HTTPException
-from api.schemas.error import NotFoundError
+from api.schemas.errors import NotFoundError
 
 class NotFoundException(HTTPException[NotFoundError]):
 

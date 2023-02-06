@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from api import config
 from api.paths import routers
 
-from api.schemas.error import NotFoundError
+from api.schemas.errors import NotFoundError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 

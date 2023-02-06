@@ -21,6 +21,6 @@ models = {
 	) for key, val in config.models.items()
 }
 
-# Export main interfaces
+# Export main interface
 from api import api
 StyleGANFastAPI = api.StyleGANFastAPI

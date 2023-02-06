@@ -1,10 +1,7 @@
 import types
 from typing import TypeVar, Generic, Self, Any
-from pydantic import BaseModel
 from fastapi import HTTPException as FastAPIHTTPException
-
-class HTTPError(BaseModel):
-	detail: Any = None
+from api.schemas.errors import HTTPError
 
 T = TypeVar("T", bound=HTTPError)
 

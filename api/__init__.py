@@ -1,3 +1,4 @@
+from api import env
 from api import conf
 from api import util
 
@@ -7,9 +8,7 @@ sys.path.insert(0, str(util.file_rel_path("../core")))
 del sys
 
 # Read configuration and define at top level
-import os
-config = conf.load_config(os.getenv("STYLEGAN_TOML", default=util.file_rel_path("../config.toml")))
-del os
+config = conf.load_config(env.toml_path)
 
 # Load all generator models in use
 from api import model

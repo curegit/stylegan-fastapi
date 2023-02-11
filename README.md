@@ -14,7 +14,9 @@ STYLEGAN_TOML="./custom_config.toml"
 
 `STYLEGAN_TOML` can be absolute or relative from the working directory.
 
-## 
+## Configuration file
+
+models: relative path from working directory
 
 ## Forwarded
 

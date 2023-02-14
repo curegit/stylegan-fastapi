@@ -4,6 +4,8 @@ to run API server
 
 `conda install fastapi uvicorn pydantic chainer numpy h5py pillow`
 
+pip3.11 install "uvicorn[standard]" gunicorn
+
 ### 
 
 ## 

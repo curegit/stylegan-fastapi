@@ -1,13 +1,27 @@
 title = "StyleGAN API"
 version = "1.0.0"
 description = "画像生成"
-
-[http]
-cors = true
+lossy = false
+docs = true
 
 [server]
-gpu = true
-buffer = true
+gpu = -1
+logger = "uvicorn"
+
+[server.http]
+proxy = false
+
+[server.http.cors]
+enabled = true
+origins = ["http://localhost:8000", "http://localhost:8080", "http://127.0.0.1:8000/"]
+
+[server.limit]
+serial = true
+delay = 1.5
+
+[server.limit.rate]
+enabled = true
+max_rate = 1
 
 [models]
   [models.mnist]

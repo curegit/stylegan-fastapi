@@ -52,14 +52,16 @@ class GeneratorModel:
 		return GeneratorModel(generator, id, name, description, lossy=lossy)
 
 def get_device(gpu: bool | int | None = config.server.gpu) -> CpuDevice | GpuDevice:
-	if gpu is None:
-		return get_device()
-	if gpu is True:
-		return GpuDevice.from_device_id(0)
-	if gpu is False:
-		return CpuDevice()
-	if gpu >= 0:
-		return GpuDevice.from_device_id(gpu)
-	if gpu == -1:
-		return CpuDevice()
-	raise ValueError()
+	match gpu:
+		case None:
+			return get_device()
+		case True:
+			return GpuDevice.from_device_id(0)
+		case False:
+			return CpuDevice()
+		case int() if gpu == -1:
+			return CpuDevice()
+		case int() if gpu >= 0:
+			return GpuDevice.from_device_id(gpu)
+		case _:
+			raise ValueError()

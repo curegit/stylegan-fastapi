@@ -1,4 +1,5 @@
-from typing import TypeAlias, Iterator
+from typing import TypeAlias
+from collections.abc import Iterator
 from itertools import cycle
 
 Base64: TypeAlias = str

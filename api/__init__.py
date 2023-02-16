@@ -12,12 +12,14 @@ config = conf.load_config(env.toml_path)
 
 # Load all generator models in use
 from api import model
-models = {
+models: dict[str, model.GeneratorModel] = {
 	key: model.GeneratorModel.load(
 		val.file,
-		val.name,
-		val.description,
-		val.gpu
+		id=key,
+		name=val.name,
+		description=val.description,
+		gpu=val.gpu,
+		lossy=val.lossy
 	) for key, val in config.models.items()
 }
 

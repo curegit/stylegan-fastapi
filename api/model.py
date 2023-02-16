@@ -5,21 +5,14 @@ from utilities.image import to_pil_image
 from api import config, logger
 from api.schemas import Model
 
-class GeneratorModel():
+class GeneratorModel:
 
-	def __init__(
-		self,
-		generator: Generator,
-		id: str,
-		name: str,
-		description: str,
-		#gpu: bool | int | None = False
-	) -> None:
+	def __init__(self, generator: Generator, id: str, name: str, description: str, *, lossy: bool = False) -> None:
 		self.generator = generator
 		self.id = id
 		self.name = name
 		self.description = description
-		#self.gpu = config.server.gpu if gpu is None else gpu
+		self.lossy = lossy
 
 	# Call the network
 	def __call__(self, *args, **kwargs):
@@ -51,12 +44,12 @@ class GeneratorModel():
 		)
 
 	@staticmethod
-	def load(filepath: str, id: str, name: str, description: str, gpu: bool | int | None = None, lossy: bool = False) -> Self:
+	def load(filepath: str, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool = False) -> Self:
 		generator = Generator.load(filepath)
 		logger.info(f"Loaded '{filepath}'")
 		device = get_device(gpu)
 		generator.to_device(device)
-		return GeneratorModel(generator, id, name, description)
+		return GeneratorModel(generator, id, name, description, lossy=lossy)
 
 def get_device(gpu: bool | int | None = config.server.gpu) -> CpuDevice | GpuDevice:
 	if gpu is None:

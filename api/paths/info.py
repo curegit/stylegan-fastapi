@@ -4,10 +4,10 @@ from api.schemas import Model
 
 router = APIRouter(tags=["info"])
 
-@router.get("/")
-def hello():
-	return {"": ""}
+@router.get("/", response_model=str)
+async def welcome():
+	return "Hello"
 
 @router.get("/models/", response_model=list[Model])
-def model_specs():
-	return [model.spec for model in models.values()]
+async def model_list():
+	return [model.info for model in models.values()]

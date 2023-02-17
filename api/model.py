@@ -32,7 +32,7 @@ class GeneratorModel:
 		return z, ws, pil_img
 
 	@property
-	def spec(self) -> Model:
+	def info(self) -> Model:
 		return Model(
 			id=self.id,
 			name=self.name,
@@ -40,7 +40,7 @@ class GeneratorModel:
 			conditional=self.conditional,
 			labels=(self.labels or None),
 			width=self.width,
-			height=self.height
+			height=self.height,
 		)
 
 	@staticmethod

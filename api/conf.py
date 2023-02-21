@@ -52,6 +52,7 @@ class ServerConfig(BaseModel):
 
 class ModelConfig(BaseModel):
 	file: str
+	relative : bool = False
 	name: str
 	description: str = ""
 	gpu: bool | int | None = None

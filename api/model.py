@@ -1,4 +1,5 @@
 from typing import Self
+from pathlib import Path
 from chainer.backend import CpuDevice, GpuDevice
 from stylegan.networks import Generator
 from utilities.image import to_pil_image
@@ -68,7 +69,7 @@ class GeneratorModel:
 		)
 
 	@staticmethod
-	def load(filepath: str, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool = False) -> Self:
+	def load(filepath: Path, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool = False) -> Self:
 		generator = Generator.load(filepath)
 		logger.info(f"Loaded '{filepath}'")
 		device = get_device(gpu)

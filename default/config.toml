@@ -36,10 +36,12 @@ toml_relative = true
 
 [models.mnist]
 file = "models/MNIST32.hdf5"
+relative = true
 name = "MNIST"
 
 [models.afhq]
 file = "models/動物フリッカー.hdf5"
+relative = true
 name = "AFHQ"
 gpu = false
 lossy = true

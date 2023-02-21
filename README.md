@@ -24,4 +24,8 @@ models: relative path from working directory
 
 ## X-Forwarded-For
 
+## For production (reverse proxy layer)
 
+- set proxy header correctly
+- set max header & body size
+- set timeout

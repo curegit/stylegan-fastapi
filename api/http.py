@@ -3,7 +3,7 @@ from starlette.requests import Request
 from api import config
 from api.exceptions import ProxyException
 
-def client_id(request: Request) -> str:
+def get_client_id(request: Request) -> str:
 	if config.server.http.forwarded:
 		for name in config.server.http.forwarded_headers:
 			match request.headers.get(name):

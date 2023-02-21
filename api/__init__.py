@@ -8,7 +8,16 @@ sys.path.insert(0, str(util.file_rel_path("../core")))
 del sys
 
 # Read configuration and define at top level
-config = conf.load_config(env.toml_path)
+config: conf.Config = conf.load_config(env.toml_path)
+
+#
+import logging
+logger: logging.Logger = logging.getLogger(config.server.logger)
+del logging
+
+import utilities.chainer
+utilities.chainer.config_valid()
+del utilities
 
 # Load all generator models in use
 from api import model
@@ -24,5 +33,5 @@ models: dict[str, model.GeneratorModel] = {
 }
 
 # Export main interface
-from api import api
-StyleGANFastAPI = api.StyleGANFastAPI
+from api import app
+StyleGANFastAPI = app.StyleGANFastAPI

@@ -1,5 +1,5 @@
 from api.exceptions import HTTPException
-from api.schemas.errors import NotFoundError
+from api.schemas.errors import NotFoundError, RequestLimitError
 
 class NotFoundException(HTTPException[NotFoundError]):
 
@@ -12,3 +12,11 @@ class ModelNotFoundException(NotFoundException):
 
 	def __init__(self, name: str):
 		super().__init__(f"No such model: {name}")
+
+class ArrayValidationException(HTTPException):
+	pass
+
+class LimitException(HTTPException[RequestLimitError]):
+	status_code = 429
+	def __init__(self) -> None:
+		super().__init__(RequestLimitError())

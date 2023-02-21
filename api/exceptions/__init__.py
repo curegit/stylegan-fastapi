@@ -33,3 +33,6 @@ def raises(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:
 
 # Export concrete exceptions
 from api.exceptions.client import NotFoundException
+from api.exceptions.client import ArrayValidationException
+from api.exceptions.client import LimitException
+from api.exceptions.server import ProxyException

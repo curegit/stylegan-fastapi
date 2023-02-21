@@ -1,6 +1,7 @@
 from api.exceptions import HTTPException
 from api.schemas.errors import HTTPError
 
+
 class ProxyException(HTTPException):
 
 	status_code = 502

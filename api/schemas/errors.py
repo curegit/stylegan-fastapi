@@ -7,5 +7,5 @@ class HTTPError(BaseModel):
 class NotFoundError(HTTPError):
 	detail = str
 
-class RateLimitError(HTTPError):
+class RequestLimitError(HTTPError):
 	detail = str

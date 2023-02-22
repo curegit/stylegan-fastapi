@@ -1,20 +1,24 @@
 from asyncio import to_thread
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Query, Depends, Path
 from api import models
 from api.schemas import SimpleImage
 from api.exceptions import  NotFoundException, raises
 from api.limit import SpeedLimit, limit
 
+from api.model import GeneratorModel
+from api.paths.parameters import model, label
+from api.paths.dependencies import limit
+
 router = APIRouter(tags=["generation"], dependencies=[Depends(limit)])
 
+
 @router.post("/{model_id}/generate", response_model=SimpleImage, responses=raises(NotFoundException))
-async def generate(model_id: str, psi: float=Query(default=1.0, gt=0)):
-	if (model := models.get(model_id)) is None:
-		raise ModuleNotFoundError(model_id)
+async def generate(model = Depends(model), psi: float=Query(default=1.0, gt=0)):
 	async with SpeedLimit():
 		latent, style, image, label = await to_thread(
 			model.generate_encoded,
-			psi=psi
+			label=label,
+			psi=psi,
 		)
 	return SimpleImage(
 		model_id=model_id,

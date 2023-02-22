@@ -27,7 +27,7 @@ async def limit(block: bool = Depends(signalling_block), rate: bool = Depends(ra
 #
 class SpeedLimit:
 
-	def __init__(self, min_delay_sec: float) -> None:
+	def __init__(self, min_delay_sec: float = config.server.limit.min_delay) -> None:
 		self.delay = min_delay_sec
 
 	async def __aenter__(self) -> None:

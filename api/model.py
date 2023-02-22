@@ -1,10 +1,14 @@
 from typing import Self
 from pathlib import Path
+from PIL.Image import Image
+from numpy import ndarray
 from chainer.backend import CpuDevice, GpuDevice
 from stylegan.networks import Generator
 from utilities.image import to_pil_image
 from api import config, logger
+from api.image import to_png_base64, to_jpeg_base64, png_mime_type, jpeg_mime_type
 from api.schemas import Model
+from api.types import Base64
 
 def get_device(gpu: bool | int | None = config.server.gpu) -> CpuDevice | GpuDevice:
 	match gpu:
@@ -18,8 +22,7 @@ def get_device(gpu: bool | int | None = config.server.gpu) -> CpuDevice | GpuDev
 			return CpuDevice()
 		case int() if gpu >= 0:
 			return GpuDevice.from_device_id(gpu)
-		case _:
-			raise ValueError()
+	raise ValueError()
 
 
 class GeneratorModel:
@@ -33,28 +36,49 @@ class GeneratorModel:
 		self.xp = generator.xp
 		self.mean_ws = [generator.calculate_mean_w(categories=[c]) for c in range(self.generator.categories)]
 
-	# Call the network
-	def __call__(self, *args, **kwargs):
-		return self.generator(*args, **kwargs)
-
-	# Delegate to the network object
-	def __getattr__(self, key: str):
-		return getattr(self.generator, key)
-
-	def generate(self, psi: float = 1.0):
+	def generate(self, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, set | None]:
 		z = self.generator.generate_latents(1)
 		c = self.generator.generate_conditions(1) if self.generator.conditional else None
-		ws, y = self.generator(z, c, psi=psi)
-		y.to_cpu()
+		(w, *ws), y = self.generator(z, c, psi=psi)
 		z.to_cpu()
-		pil_img = to_pil_image(y[0].array)
-		return z, ws, pil_img
+		w.to_cpu()
+		y.to_cpu()
+		return z.array[0], w.array[0], to_pil_image(y.array[0])
 
-	def blend_styles(self, ):
+	def generate_encoded(self) -> tuple[Base64, Base64, Base64, str | None]:
 		pass
 
-	def mix_styles():
+	def blend_styles(self):
 		pass
+
+	def mix_styles(self):
+		pass
+
+	def encode_image(self, image: Image) -> tuple[str, Base64]:
+		if self.lossy:
+			return to_jpeg_base64(image)
+		else:
+			return to_png_base64(image)
+
+	@property
+	def image_type(self) -> str:
+		return jpeg_mime_type if self.lossy else png_mime_type
+
+	@property
+	def width(self) -> int:
+		return self.generator.width
+
+	@property
+	def height(self) -> int:
+		return self.generator.height
+
+	@property
+	def conditional(self) -> bool:
+		return self.generator.conditional
+
+	@property
+	def labels(self) -> list[str] | None:
+		return self.generator.labels or None if self.conditional else None
 
 	@property
 	def info(self) -> Model:
@@ -63,9 +87,11 @@ class GeneratorModel:
 			name=self.name,
 			description=self.description,
 			conditional=self.conditional,
-			labels=(self.labels or None),
+			labels=self.labels,
 			width=self.width,
 			height=self.height,
+			lossy=self.lossy,
+			mime_type=self.image_type,
 		)
 
 	@staticmethod

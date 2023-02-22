@@ -1,6 +1,6 @@
 import tomllib
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CORSConfig(BaseModel):
@@ -25,6 +25,8 @@ class RateLimitConfig(BaseModel):
 
 
 class LimitConfig(BaseModel):
+
+	min_delay: float = Field(0, ge=0)
 
 
 
@@ -57,6 +59,7 @@ class ModelConfig(BaseModel):
 	description: str = ""
 	gpu: bool | int | None = None
 	lossy: bool | None = None
+
 
 class Config(BaseModel):
 	title: str

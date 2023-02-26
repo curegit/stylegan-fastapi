@@ -1,3 +1,7 @@
+from fastapi import Request, Depends
+from api import config
+from api.http import get_client_id
+from api.limit import SignallingBlock
 
 async def client_id(request: Request) -> str:
 	return get_client_id(request)
@@ -5,9 +9,9 @@ async def client_id(request: Request) -> str:
 async def signalling_block(id: str = Depends(client_id, use_cache=True)):
 	if config.server.limit.block.enabled:
 		async with SignallingBlock(id):
-			return True
+			yield True
 	else:
-		return False
+		yield False
 
 async def rate_limit(id: str = Depends(client_id, use_cache=True)):
 	if config.server.limit.rate.enabled:

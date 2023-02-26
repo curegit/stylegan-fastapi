@@ -1,3 +1,7 @@
+from fastapi import Path, Query, Depends
+from api import models
+from api.model import GeneratorModel
+from api.exceptions.client import NotFoundException, LabelNotFoundException
 
 async def model(model_id: str = Path(min_length=1)):
 	if (model := models.get(model_id)) is None:
@@ -10,5 +14,5 @@ async def label(label: str | None = Query(min_length=1), model: GeneratorModel =
 	elif not model.conditional:
 		raise
 	elif label not in model.labels:
-		raise
+		raise LabelNotFoundException()
 	return label

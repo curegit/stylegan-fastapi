@@ -2,17 +2,17 @@ from asyncio import to_thread
 from fastapi import APIRouter, Query, Depends, Path
 from api import models
 from api.schemas import SimpleImage
-from api.exceptions import  NotFoundException, raises
+from api.exceptions import raises
+from api.exceptions.client import NotFoundException
 from api.limit import SpeedLimit, limit
-
 from api.model import GeneratorModel
-from api.paths.parameters import model, label
-from api.paths.dependencies import limit
+from api.operations.parameters import model, label
+from api.operations.dependencies import limit
 
-router = APIRouter(tags=["generation"], dependencies=[Depends(limit)])
+router = APIRouter(tags=["generation"], dependencies=[Depends(limit)], responses=raises(limit.exceptions))
 
 
-@router.post("/{model_id}/generate", response_model=SimpleImage, responses=raises(NotFoundException))
+@router.post("/{model_id}/generate", response_model=SimpleImage, responses=raises(model,))
 async def generate(model = Depends(model), psi: float=Query(default=1.0, gt=0)):
 	async with SpeedLimit():
 		latent, style, image, label = await to_thread(

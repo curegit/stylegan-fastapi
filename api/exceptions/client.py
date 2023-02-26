@@ -13,6 +13,8 @@ class ModelNotFoundException(NotFoundException):
 	def __init__(self, name: str):
 		super().__init__(f"No such model: {name}")
 
+class LabelNotFoundException(NotFoundException):
+
 class ArrayValidationException(HTTPException):
 	pass
 

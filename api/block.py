@@ -4,12 +4,13 @@ import filelock
 from pathlib import Path
 from api import config
 from api.exceptions.client import LimitException
-from api.util import resolve_path
+from api.util import mkdirp, resolve_path
 
 # Context manager to block
 class SignallingBlock:
 
-	dir_path: Path = resolve_path(config.server.tmp_dir)
+	dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("lock")
+	mkdirp(dir_path)
 
 	def __init__(self, id: str, timeout: float = config.server.limit.block.timeout) -> None:
 		self.id = id

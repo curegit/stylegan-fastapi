@@ -3,12 +3,8 @@ import asyncio
 import filelock
 from pathlib import Path
 from api import config
-from api.exceptions import LimitException
+from api.exceptions.client import LimitException
 from api.util import resolve_path
-
-class RateLimiter:
-	pass
-
 
 # Context manager to block
 class SignallingBlock:
@@ -22,7 +18,7 @@ class SignallingBlock:
 
 	async def __aenter__(self) -> None:
 		start = time.time()
-		self.lock = filelock.UnixFileLock(self.lock_path)
+		self.lock = filelock.SoftFileLock(self.lock_path)
 		while True:
 			try:
 				self.lock.acquire(blocking=False)

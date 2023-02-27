@@ -28,8 +28,6 @@ class LimitConfig(BaseModel):
 
 	min_delay: float = Field(0, ge=0)
 
-
-
 	block: SignallingBlockConfig
 	rate: RateLimitConfig
 
@@ -43,7 +41,7 @@ class ServerConfig(BaseModel):
 	poll: float = 0.2
 	timeout: float = 30
 	http: HTTPConfig = HTTPConfig()
-	limit: LimitConfig = LimitConfig()
+	limit: LimitConfig
 
 
 

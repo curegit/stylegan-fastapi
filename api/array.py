@@ -2,7 +2,7 @@ import base64
 import numpy as np
 from io import BytesIO
 from api.types import Base64
-from api.exceptions import ArrayValidationException
+from api.exceptions.client import ArrayValidationException
 
 def to_npy_base64(array: np.ndarray) -> Base64:
 	io = BytesIO()

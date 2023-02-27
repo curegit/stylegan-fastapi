@@ -23,7 +23,10 @@ del utilities
 from api import model
 models: dict[str, model.GeneratorModel] = {
 	key: model.GeneratorModel.load(
-		file=(env.toml_path.parent if val.relative else util.resolve_path(".")).joinpath(val.file).resolve(),
+		filepath=(
+			env.toml_path.parent if val.relative
+			else util.resolve_path(".")
+		).joinpath(val.file).resolve(),
 		id=key,
 		name=val.name,
 		description=val.description,

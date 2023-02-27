@@ -1,4 +1,5 @@
 import types
+from collections.abc import Callable
 from typing import TypeVar, Generic, Self, Any
 from fastapi import HTTPException as FastAPIHTTPException
 from api.schemas.errors import HTTPError
@@ -28,11 +29,13 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 	def __init__(self, error: T, headers: dict[str, Any] | None = None) -> None:
 			super().__init__(self.status_code, error.detail, headers)
 
+
+def r(*exceptions: type[HTTPException]):
+	def decorator(f: Callable):
+		f.raises = list(exceptions)
+		return f
+	return decorator
+
+## TODO: merge same code
 def raises(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:
 	return {e.status_code: {"model": e.error_model} for e in exceptions}
-
-# Export concrete exceptions
-from api.exceptions.client import NotFoundException
-from api.exceptions.client import ArrayValidationException
-from api.exceptions.client import LimitException
-from api.exceptions.server import ProxyException

@@ -20,3 +20,6 @@ class SpeedLimit:
 		wait = self.delay - (exit_time - self.entry_time)
 		if wait > 0:
 			await asyncio.sleep(wait)
+
+class RateLimiter:
+	pass

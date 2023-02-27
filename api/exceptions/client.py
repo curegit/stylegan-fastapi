@@ -15,6 +15,9 @@ class ModelNotFoundException(NotFoundException):
 
 class LabelNotFoundException(NotFoundException):
 
+	def __init__(self, name: str):
+		super().__init__(f"No such label: {name}")
+
 class ArrayValidationException(HTTPException):
 	pass
 

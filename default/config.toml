@@ -32,7 +32,6 @@ enabled = true
 max_rate = 1
 
 [models]
-toml_relative = true
 
 [models.mnist]
 file = "models/MNIST32.hdf5"

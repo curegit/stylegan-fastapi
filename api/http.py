@@ -1,7 +1,7 @@
 from hashlib import blake2b
 from starlette.requests import Request
 from api import config
-from api.exceptions import ProxyException
+from api.exceptions.server import ProxyException
 
 def get_client_id(request: Request) -> str:
 	if config.server.http.forwarded:

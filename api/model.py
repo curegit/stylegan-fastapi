@@ -38,9 +38,11 @@ class GeneratorModel:
 		self.mean_ws = [generator.calculate_mean_w(categories=[c]) for c in range(self.generator.categories)]
 
 	def generate_latent(self):
+		pass
 
 
 	def generate_condition(self):
+		pass
 
 
 	def generate(self, label: str | None = None, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, set | None]:

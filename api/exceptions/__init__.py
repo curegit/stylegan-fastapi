@@ -30,12 +30,14 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 			super().__init__(self.status_code, error.detail, headers)
 
 
-def r(*exceptions: type[HTTPException]):
-	def decorator(f: Callable):
-		f.raises = list(exceptions)
-		return f
+def raises(*exceptions: type[HTTPException]):
+	def decorator(func: Callable):
+		func.raises = list(exceptions)
+		return func
 	return decorator
 
+
+
 ## TODO: merge same code
-def raises(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:
+def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:
 	return {e.status_code: {"model": e.error_model} for e in exceptions}

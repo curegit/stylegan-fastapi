@@ -103,7 +103,7 @@ class GeneratorModel:
 		)
 
 	@staticmethod
-	def load(filepath: Path, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool = False) -> Self:
+	def load(filepath: Path, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool | None = None) -> Self:
 		generator = Generator.load(filepath)
 		logger.info(f"Loaded '{filepath}'")
 		device = get_device(gpu)

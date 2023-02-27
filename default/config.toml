@@ -8,19 +8,17 @@ redoc = true
 [server]
 gpu = -1
 logger = "uvicorn"
-tmp = "./run"
+tmp_dir = "./run"
 
 [server.http]
-proxy = false
+forwarded = false
 
 [server.http.cors]
 enabled = true
 origins = ["http://localhost:8000", "http://localhost:8080", "http://127.0.0.1:8000/"]
 
 [server.limit]
-serial = true
-delay = 1.5
-
+min_delay = 1.5
 
 [server.limit.block]
 enabled = true
@@ -32,7 +30,6 @@ enabled = true
 max_rate = 1
 
 [models]
-
 [models.mnist]
 file = "models/MNIST32.hdf5"
 relative = true
@@ -44,3 +41,6 @@ relative = true
 name = "AFHQ"
 gpu = false
 lossy = true
+[models.afhq.labels]
+cat = "Cat"
+

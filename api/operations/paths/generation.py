@@ -1,22 +1,21 @@
 from asyncio import to_thread
 from fastapi import APIRouter, Query, Depends
 from api.schemas import SimpleImage
-from api.exceptions import raises
+from api.exceptions import responses
 from api.exceptions.client import NotFoundException
 from api.limit import SpeedLimit
 from api.model import GeneratorModel
 from api.operations.parameters import model, label
 from api.operations.dependencies import limit
 
-router = APIRouter(tags=["generation"], dependencies=[Depends(limit)], responses=raises())
+router = APIRouter(tags=["generation"], dependencies=[Depends(limit)], responses=responses())
 
 
-@router.post("/{model_id}/generate", response_model=SimpleImage, responses=raises())
+@router.post("/{model_id}/generate", response_model=SimpleImage, responses=responses())
 async def generate(model: GeneratorModel = Depends(model), psi: float = Query(default=1.0, gt=0)):
 	async with SpeedLimit():
 		latent, style, image, label = await to_thread(
 			model.generate_encoded,
-			label=label,
 			psi=psi,
 		)
 	return SimpleImage(
@@ -30,3 +29,4 @@ async def generate(model: GeneratorModel = Depends(model), psi: float = Query(de
 		latent=latent,
 		style=style,
 	)
+

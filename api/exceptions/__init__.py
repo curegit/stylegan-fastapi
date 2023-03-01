@@ -36,7 +36,11 @@ def raises(*exceptions: type[HTTPException]):
 		return func
 	return decorator
 
-
+def raises_from(*objects: Any) -> list[type[HTTPException]]:
+	exceptions = []
+	for object in objects:
+		exceptions.extend(object.raises)
+	return exceptions
 
 ## TODO: merge same code
 def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:

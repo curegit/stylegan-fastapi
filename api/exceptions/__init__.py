@@ -6,7 +6,6 @@ from api.schemas.errors import HTTPError
 
 T = TypeVar("T", bound=HTTPError)
 
-
 class HTTPException(FastAPIHTTPException, Generic[T]):
 
 	status_code: int = 400
@@ -18,7 +17,7 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 	def __class_getitem__(cls, key: type[T]) -> type[Self]:
 		if key in cls.reified:
 			return cls.reified[key]
-		new_exception_class: type[HTTPException] = types.new_class(
+		new_exception_class: type[Self] = types.new_class(
 			name=cls.__name__,
 			bases=(cls,),
 			exec_body=(lambda ns: ns)
@@ -31,19 +30,20 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 			super().__init__(self.status_code, error.detail, headers)
 
 
-F = TypeVar("F", bound=Callable)
+C = TypeVar("C", bound=Callable, covariant=True)
 
-
-class Raises(Protocol[F]):
+class Raises(Protocol[C]):
 
 	@property
-	def __call__(self) -> F:
+	def __call__(self) -> C:
 		raise NotImplementedError()
 
 	@property
 	def raises(self) -> Iterable[type[HTTPException]]:
 		raise NotImplementedError()
 
+
+F = TypeVar("F", bound=Callable)
 
 def raises(*exceptions: type[HTTPException]) -> Callable[[F], Raises[F]]:
 	def decorator(function: F) -> Raises[F]:
@@ -52,10 +52,8 @@ def raises(*exceptions: type[HTTPException]) -> Callable[[F], Raises[F]]:
 	return decorator
 
 def raises_from(*functions: Raises[F]) -> Iterable[type[HTTPException]]:
-	exceptions = []
 	for function in functions:
-		exceptions.extend(function.raises)
-	return exceptions
+		yield from function.raises
 
 ## TODO: merge same code
 def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:

@@ -12,7 +12,7 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 
 	error_model: type[HTTPError] = HTTPError
 
-	reified: dict[type, type] = dict()
+	reified: dict[type, type] = {}
 
 	def __class_getitem__(cls, key: type[T]) -> type[Self]:
 		if key in cls.reified:
@@ -55,6 +55,12 @@ def raises_from(*functions: Raises[F]) -> Iterable[type[HTTPException]]:
 	for function in functions:
 		yield from function.raises
 
-## TODO: merge same code
 def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:
-	return {e.status_code: {"model": e.error_model} for e in exceptions}
+	response_dict: dict[int, dict[str, Any]] = {}
+	for exception in exceptions:
+		if exception.status_code in response_dict:
+			response = response_dict[exception.status_code]
+			response["model"] = response["model"] | exception.error_model
+		else:
+			response_dict[exception.status_code] = {"model": exception.error_model}
+	return response_dict

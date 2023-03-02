@@ -1,10 +1,11 @@
 import types
-from collections.abc import Callable
-from typing import TypeVar, Generic, Self, Any
+from typing import TypeVar, Generic, Protocol, Self, Any
+from collections.abc import Callable, Iterable
 from fastapi import HTTPException as FastAPIHTTPException
 from api.schemas.errors import HTTPError
 
 T = TypeVar("T", bound=HTTPError)
+
 
 class HTTPException(FastAPIHTTPException, Generic[T]):
 
@@ -12,7 +13,7 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 
 	error_model: type[HTTPError] = HTTPError
 
-	reified: dict[type, type] = {}
+	reified: dict[type, type] = dict()
 
 	def __class_getitem__(cls, key: type[T]) -> type[Self]:
 		if key in cls.reified:
@@ -30,16 +31,30 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 			super().__init__(self.status_code, error.detail, headers)
 
 
-def raises(*exceptions: type[HTTPException]):
-	def decorator(func: Callable):
-		func.raises = list(exceptions)
-		return func
+F = TypeVar("F", bound=Callable)
+
+
+class Raises(Protocol[F]):
+
+	@property
+	def __call__(self) -> F:
+		raise NotImplementedError()
+
+	@property
+	def raises(self) -> Iterable[type[HTTPException]]:
+		raise NotImplementedError()
+
+
+def raises(*exceptions: type[HTTPException]) -> Callable[[F], Raises[F]]:
+	def decorator(function: F) -> Raises[F]:
+		function.raises = list(exceptions)
+		return function
 	return decorator
 
-def raises_from(*objects: Any) -> list[type[HTTPException]]:
+def raises_from(*functions: Raises[F]) -> Iterable[type[HTTPException]]:
 	exceptions = []
-	for object in objects:
-		exceptions.extend(object.raises)
+	for function in functions:
+		exceptions.extend(function.raises)
 	return exceptions
 
 ## TODO: merge same code

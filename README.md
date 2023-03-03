@@ -1,14 +1,12 @@
 # StyleGAN FastAPI
 
-to run API server
+## Requirements
 
-`conda install fastapi uvicorn pydantic chainer numpy h5py pillow`
+```sh
+pip3 install -r requirements.txt
+```
 
-pip3.11 install "uvicorn[standard]" gunicorn
-
-### 
-
-## 
+## Configuration
 
 ```
 STYLEGAN_TOML="./custom_config.toml"
@@ -16,13 +14,9 @@ STYLEGAN_TOML="./custom_config.toml"
 
 `STYLEGAN_TOML` can be absolute or relative from the working directory.
 
-## Configuration file
+### Configuration file spec
 
 models: relative path from working directory
-
-## Forwarded
-
-## X-Forwarded-For
 
 ## For production (reverse proxy layer)
 

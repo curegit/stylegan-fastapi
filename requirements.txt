@@ -1,0 +1,9 @@
+fastapi
+starlette
+uvicorn[standard]
+pydantic
+chainer
+numpy
+h5py
+pillow
+filelock

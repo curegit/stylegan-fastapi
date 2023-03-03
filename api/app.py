@@ -2,7 +2,7 @@ from collections.abc import Awaitable, Callable
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from api import config, logger
-from api.paths import routers
+from api.operations import routers
 
 class StyleGANFastAPI(FastAPI):
 

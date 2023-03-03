@@ -6,6 +6,7 @@ from chainer.backend import CpuDevice, GpuDevice
 from stylegan.networks import Generator
 from utilities.image import to_pil_image
 from api import config, logger
+from api.array import to_npy_base64
 from api.image import to_png_base64, to_jpeg_base64, png_mime_type, jpeg_mime_type
 from api.schemas import Model
 from api.types import Base64
@@ -36,17 +37,27 @@ class GeneratorModel:
 		self.xp = generator.xp
 		self.mean_ws = [generator.calculate_mean_w(categories=[c]) for c in range(self.generator.categories)]
 
-	def generate(self, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, set | None]:
+	def generate_latent(self):
+		pass
+
+
+	def generate_condition(self):
+		pass
+
+
+	def generate(self, label: str | None = None, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, set | None]:
 		z = self.generator.generate_latents(1)
 		c = self.generator.generate_conditions(1) if self.generator.conditional else None
 		(w, *ws), y = self.generator(z, c, psi=psi)
 		z.to_cpu()
 		w.to_cpu()
 		y.to_cpu()
-		return z.array[0], w.array[0], to_pil_image(y.array[0])
+		return z.array[0], w.array[0], to_pil_image(y.array[0]), label
 
-	def generate_encoded(self) -> tuple[Base64, Base64, Base64, str | None]:
-		pass
+	def generate_encoded(self, psi: float = 1.0) -> tuple[Base64, Base64, Base64, str | None]:
+		z, w, image, label = self.generate()
+		return to_npy_base64(z), to_npy_base64(w), self.encode_image(image), label
+
 
 	def blend_styles(self):
 		pass
@@ -55,10 +66,7 @@ class GeneratorModel:
 		pass
 
 	def encode_image(self, image: Image) -> tuple[str, Base64]:
-		if self.lossy:
-			return to_jpeg_base64(image)
-		else:
-			return to_png_base64(image)
+		return to_jpeg_base64(image) if self.lossy else to_png_base64(image)
 
 	@property
 	def image_type(self) -> str:
@@ -78,7 +86,7 @@ class GeneratorModel:
 
 	@property
 	def labels(self) -> list[str] | None:
-		return self.generator.labels or None if self.conditional else None
+		return self.generator.labels if self.conditional else None
 
 	@property
 	def info(self) -> Model:
@@ -95,7 +103,7 @@ class GeneratorModel:
 		)
 
 	@staticmethod
-	def load(filepath: Path, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool = False) -> Self:
+	def load(filepath: Path, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool | None = None) -> Self:
 		generator = Generator.load(filepath)
 		logger.info(f"Loaded '{filepath}'")
 		device = get_device(gpu)

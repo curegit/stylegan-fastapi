@@ -1,28 +1,15 @@
 import time
 import asyncio
-from fastapi import Request, Depends
 from api import config
 from api.http import get_client_id
-from api.block import SignallingBlock
 
-async def client_id(request: Request) -> str:
-	return get_client_id(request)
-
-async def signalling_block(id: str = Depends(client_id, use_cache=True)):
-	if config.server.limit.block.enabled:
-		async with SignallingBlock(id):
-			return True
-	else:
-		return False
-
-async def rate_limit(id: str = Depends(client_id, use_cache=True)):
-	if config.server.limit.rate.enabled:
-		yield
-	else:
-		yield
-
-async def limit(block: bool = Depends(signalling_block), rate: bool = Depends(rate_limit)):
-	return block or rate
+import time
+import asyncio
+import filelock
+from pathlib import Path
+from api import config
+from api.exceptions.client import BlockTimeoutException
+from api.utils import mkdirp, resolve_path
 
 #
 class SpeedLimit:
@@ -38,3 +25,44 @@ class SpeedLimit:
 		wait = self.delay - (exit_time - self.entry_time)
 		if wait > 0:
 			await asyncio.sleep(wait)
+
+
+
+# Context manager to block
+class SignallingBlock:
+
+	dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("lock")
+	mkdirp(dir_path)
+
+	def __init__(self, id: str, timeout: float = config.server.limit.block.timeout) -> None:
+		self.id = id
+		self.timeout = timeout
+		self.lock_path = self.dir_path.joinpath(id + ".lock")
+
+	async def __aenter__(self) -> None:
+		start = time.time()
+		self.lock = filelock.SoftFileLock(self.lock_path)
+		while True:
+			try:
+				self.lock.acquire(blocking=False)
+				return
+			except filelock.Timeout:
+				t = time.time() - start
+				if t >= self.timeout:
+					raise BlockTimeoutException()
+				await asyncio.sleep(config.server.limit.block.poll)
+
+	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+		self.lock.release()
+
+
+class RateLimiter:
+
+	def __init__(self, id: str) -> None:
+		pass
+
+	async def __aenter__(self) -> None:
+		pass
+
+	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+		pass

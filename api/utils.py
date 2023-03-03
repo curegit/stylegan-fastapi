@@ -1,5 +1,9 @@
+import os
 import inspect
 from pathlib import Path
+
+def mkdirp(path: str | Path) -> None:
+	os.makedirs(path, exist_ok=True)
 
 def resolve_path(path: str | Path) -> Path:
 	return Path(path).resolve()

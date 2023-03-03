@@ -1,7 +1,7 @@
 from hashlib import blake2b
 from starlette.requests import Request
 from api import config
-from api.exceptions import ProxyException
+from api.exceptions.server import BadGatewayException
 
 def get_client_id(request: Request) -> str:
 	if config.server.http.forwarded:
@@ -9,7 +9,7 @@ def get_client_id(request: Request) -> str:
 			match request.headers.get(name):
 				case str() as value if value:
 					return hash_client(value)
-		raise ProxyException
+		raise BadGatewayException("client IP address is not set in the header as expected")
 	else:
 		return hash_client(client_ip_address(request))
 
@@ -17,7 +17,7 @@ def client_ip_address(request: Request) -> str:
 	match request.client:
 		case (host, port):
 			return host
-	raise ProxyException
+	raise BadGatewayException()
 
 def hash_client(client: str) -> str:
 	blake2 = blake2b(digest_size=16)

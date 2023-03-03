@@ -40,7 +40,10 @@ class RequestLimitException(HTTPException[RequestLimitError]):
 	status_code = 429
 
 	def __init__(self, msg: str, retry_after: int | None = None) -> None:
-		super().__init__(RequestLimitError(detail=msg), headers={"Retry-After", retry_after})
+		if retry_after is None:
+			super().__init__(RequestLimitError(detail=msg))
+		else:
+			super().__init__(RequestLimitError(detail=msg), headers={"Retry-After": retry_after})
 
 
 class BlockTimeoutException(RequestLimitException):

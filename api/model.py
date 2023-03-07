@@ -108,4 +108,4 @@ class GeneratorModel:
 		logger.info(f"Loaded '{filepath}'")
 		device = get_device(gpu)
 		generator.to_device(device)
-		return GeneratorModel(generator, id, name, description, lossy=lossy)
+		return GeneratorModel(generator, id, name, description, lossy=(config.lossy if lossy is None else lossy))

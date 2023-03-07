@@ -27,7 +27,8 @@ poll = 0.25
 
 [server.limit.rate]
 enabled = true
-max_rate = 1
+window = 3600
+max_request = 200
 
 [models]
 [models.mnist]

@@ -7,3 +7,5 @@ numpy
 h5py
 pillow
 filelock
+aiosqlite
+tqdm

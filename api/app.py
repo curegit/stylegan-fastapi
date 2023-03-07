@@ -12,6 +12,8 @@ class StyleGANFastAPI(FastAPI):
 			title=config.title,
 			description=config.description,
 			version=config.version,
+			docs_url=("/docs" if config.docs else None),
+			redoc_url=("/redoc" if config.redoc else None),
 		)
 
 		# Include sectioned subrouters

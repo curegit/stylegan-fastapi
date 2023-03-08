@@ -21,7 +21,9 @@ class SignallingBlockConfig(BaseModel, extra="forbid"):
 
 class RateLimitConfig(BaseModel, extra="forbid"):
 	enabled: bool = False
-	max_rate: float
+	window: float = 3600
+	max_request: int = Field(100, gt=0)
+
 
 
 class LimitConfig(BaseModel, extra="forbid"):

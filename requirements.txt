@@ -6,6 +6,6 @@ chainer
 numpy
 h5py
 pillow
-filelock
 aiosqlite
+filelock
 tqdm

@@ -1,0 +1,7 @@
+*.log
+*.hdf5
+*.service
+*.socket
+*.sqlite3
+*.lock
+__pycache__/

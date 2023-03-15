@@ -15,9 +15,9 @@ def get_client_id(request: Request) -> str:
 
 def client_ip_address(request: Request) -> str:
 	match request.client:
-		case (host, port):
+		case (host, port) if host:
 			return host
-	raise BadGatewayException()
+	raise BadGatewayException("client IP address is not set")
 
 def hash_client(client: str) -> str:
 	blake2 = blake2b(digest_size=16)

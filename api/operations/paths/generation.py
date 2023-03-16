@@ -13,6 +13,7 @@ router = APIRouter(tags=["generation"], dependencies=[Depends(limit)], responses
 
 @router.post(
 	"/{model_id}/generate",
+	operation_id="generate",
 	response_model=SimpleImage,
 	responses=responses(*raises_from(model, label))
 )

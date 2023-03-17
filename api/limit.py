@@ -1,4 +1,5 @@
 import time
+import glob
 import asyncio
 import sqlite3
 import aiosqlite
@@ -53,6 +54,27 @@ class SignallingBlock:
 		self.lock.release()
 
 
+# おおむねのチェック
+class CLimit:
+
+	dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("con")
+	mkdirp(dir_path)
+
+	def __init__(self) -> None:
+		pass
+
+	async def __aenter__(self):
+		runs = glob.glob(glob.escape(self.dir_path) + "/*.id")
+		# ロック再取得の順序が問題になる
+		# pending フォルダに time を書く
+		#with PendingLock():
+			# time ->
+			# sleep poll
+			# check empty?
+			# go thru
+
+	async def __aexit__(self):
+		pass
 
 
 class RateLimiter:

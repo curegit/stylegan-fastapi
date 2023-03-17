@@ -47,7 +47,7 @@ class GeneratorModel:
 
 	def generate(self, label: str | None = None, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, set | None]:
 		z = self.generator.generate_latents(1)
-		c = self.generator.generate_conditions(1) if self.generator.conditional else None
+		c = self.generator.generate_conditions(1)[1] if self.generator.conditional else None
 		(w, *ws), y = self.generator(z, c, psi=psi)
 		z.to_cpu()
 		w.to_cpu()

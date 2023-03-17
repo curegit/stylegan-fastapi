@@ -28,7 +28,7 @@ def validate_array(array: ndarray, shape: tuple[int] | tuple[()] | None = None, 
 			return False
 	return True
 
-def clamp_array(array: ndarray, min: int | float | None, max: int | float | None, replace_nan: bool | int | float = True):
+def clamp_array(array: ndarray, min: int | float | None, max: int | float | None, replace_nan: bool | int | float = True) -> ndarray:
 	match replace_nan:
 		case False:
 			x = array

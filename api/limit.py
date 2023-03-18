@@ -119,7 +119,7 @@ class ConcurrencyLimiter:
 			if self.queue_lock is not None:
 				self.queue_lock.release()
 
-	async def __aexit__(self):
+	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
 		self.lock.release()
 
 

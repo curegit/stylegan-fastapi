@@ -36,7 +36,7 @@ class SignallingBlock:
 
 	def __init__(self, id: str) -> None:
 		self.id = id
-		self.lock_path = self.dir_path.joinpath("{id}.lock")
+		self.lock_path = self.dir_path.joinpath(f"{id}.lock")
 
 	async def __aenter__(self) -> None:
 		start = time.monotonic()

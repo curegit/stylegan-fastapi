@@ -16,5 +16,3 @@ graceful_timeout = 60
 limit_request_line = 2048
 limit_request_fields = 64
 limit_request_field_size = 1024
-
-pythonpath = str(a)

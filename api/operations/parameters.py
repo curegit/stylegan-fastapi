@@ -1,6 +1,6 @@
 from fastapi import Path, Query, Body, Depends
 from api import models
-from api.array import from_npy_base64, validate_array
+from api.array import from_npy_base64, validate_array, clamp_array
 from api.model import GeneratorModel
 from api.schemas.request import RegenerateRequest
 from api.exceptions import raises, raises_from
@@ -38,4 +38,4 @@ async def latent(latent: RegenerateRequest | None = Body(None), model: Generator
 		raise DeserializationException()
 	if not validate_array(arr):
 		raise ArrayValidationException()
-	return arr
+	return clamp_array(arr, -100, 100, replace_nan=True)

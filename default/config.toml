@@ -25,6 +25,13 @@ enabled = true
 timeout = 10
 poll = 0.25
 
+[server.limit.concurrency]
+enabled = true
+max_concurrency = 8
+max_queue = 24
+timeout = 20
+poll = 0.1
+
 [server.limit.rate]
 enabled = true
 window = 3600

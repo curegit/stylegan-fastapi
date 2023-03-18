@@ -19,6 +19,13 @@ class SignallingBlockConfig(BaseModel, extra="forbid"):
 	timeout: float = 10
 	poll: float = 0.2
 
+class ConcurrencyLimitConfig(BaseModel, extra="forbid"):
+	enabled: bool = False
+	max_concurrency: int = Field(8, gt=0)
+	max_queue: int = Field(24, ge=0)
+	timeout: float = 20
+	poll: float = 0.1
+
 class RateLimitConfig(BaseModel, extra="forbid"):
 	enabled: bool = False
 	window: float = 3600
@@ -31,6 +38,7 @@ class LimitConfig(BaseModel, extra="forbid"):
 	min_delay: float = Field(0, ge=0)
 
 	block: SignallingBlockConfig
+	concurrency: ConcurrencyLimitConfig
 	rate: RateLimitConfig
 
 

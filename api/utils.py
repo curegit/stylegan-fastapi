@@ -1,10 +1,11 @@
 import os
+import os.path
 import shutil
 import inspect
 from pathlib import Path
 
 def mkdirp(path: str | Path, recreate=False) -> None:
-	if recreate:
+	if recreate and os.path.lexists(path):
 		shutil.rmtree(path)
 	os.makedirs(path, exist_ok=True)
 

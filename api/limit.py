@@ -149,7 +149,7 @@ class RateLimiter:
 	def __init__(self, id: str) -> None:
 		self.id = id
 
-	async def __aenter__(self) -> None:
+	async def check(self) -> None:
 		now = time.time()
 		async with aiosqlite.connect(self.db_path, isolation_level=None) as connection:
 			connection.row_factory = aiosqlite.Row
@@ -169,6 +169,3 @@ class RateLimiter:
 						await connection.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
 			else:
 				await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
-
-	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
-		pass

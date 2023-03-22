@@ -20,10 +20,10 @@ async def signalling_block(id: str = Depends(client_id, use_cache=True)) -> bool
 @raises(RateLimitException)
 async def rate_limit(id: str = Depends(client_id, use_cache=True)) -> bool:
 	if config.server.limit.rate.enabled:
-		async with RateLimiter(id):
-			yield True
+		await RateLimiter(id).check()
+		return True
 	else:
-		yield False
+		return False
 
 @raises(OverloadedException)
 async def concurrency_limit() -> bool:

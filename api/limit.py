@@ -1,3 +1,5 @@
+import os
+import os.path
 import time
 import glob
 import asyncio
@@ -32,10 +34,11 @@ class SignallingBlock:
 
 	dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("block")
 
-	mkdirp(dir_path)
+	mkdirp(dir_path, recreate=True)
 
-	def __init__(self, id: str) -> None:
+	def __init__(self, id: str, timeout: float = config.server.limit.block.timeout) -> None:
 		self.id = id
+		self.timeout = timeout
 		self.lock_path = self.dir_path.joinpath(f"{id}.lock")
 
 	async def __aenter__(self) -> None:
@@ -47,7 +50,7 @@ class SignallingBlock:
 				return
 			except filelock.Timeout:
 				t = time.monotonic() - start
-				if t >= config.server.limit.block.timeout:
+				if t >= self.timeout:
 					raise BlockTimeoutException()
 				await asyncio.sleep(config.server.limit.block.poll)
 
@@ -62,16 +65,19 @@ class ConcurrencyLimiter:
 
 	queue_dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("queue")
 
-	mkdirp(lock_dir_path)
-	mkdirp(queue_dir_path)
+	mkdirp(lock_dir_path, recreate=True)
+	mkdirp(queue_dir_path, recreate=True)
 
-	async def __aenter__(self):
+	def __init__(self, timeout: float = config.server.limit.concurrency.timeout) -> None:
+		self.timeout = timeout
+
+	async def __aenter__(self) -> None:
 		start = time.monotonic()
 		start_ns = time.monotonic_ns()
 		self.lock = filelock.SoftFileLock(self.lock_dir_path.joinpath(f"{start_ns}.lock"))
 		self.queue_lock = None
 
-		#
+		# When it has spare power, just go
 		runnings = glob.glob("*.lock", root_dir=self.lock_dir_path)
 		semaphore = config.server.limit.concurrency.max_concurrency - len(runnings)
 		if semaphore > 0:
@@ -90,7 +96,7 @@ class ConcurrencyLimiter:
 			if queue_length >= config.server.limit.concurrency.max_queue:
 				raise OverloadedException()
 			# Join the queue
-			while time.monotonic() - start < config.server.limit.concurrency.timeout:
+			while time.monotonic() - start < self.timeout:
 				self.queue_lock = filelock.SoftFileLock(self.queue_dir_path.joinpath(f"{join_time}.lock"))
 				try:
 					self.queue_lock.acquire(blocking=False)
@@ -113,7 +119,7 @@ class ConcurrencyLimiter:
 						pass
 					return
 				t = time.monotonic() - start
-				if t >= config.server.limit.concurrency.timeout:
+				if t >= self.timeout:
 					raise OverloadedException()
 		finally:
 			if self.queue_lock is not None:
@@ -123,44 +129,46 @@ class ConcurrencyLimiter:
 		self.lock.release()
 
 
-#
+# Fixed window-based rate limiter
 class RateLimiter:
 
-	db_path: Path = resolve_path(config.server.tmp_dir).joinpath("client.sqlite3")
+	dir_path: Path = resolve_path(config.server.tmp_dir)
 
-	mkdirp(db_path.parent)
-	with sqlite3.connect(db_path, isolation_level=None) as conn:
-		conn.row_factory = sqlite3.Row
-		u = conn.cursor()
-		u.execute("CREATE TABLE IF NOT EXISTS request(id TEXT NOT NULL PRIMARY KEY, time REAL NOT NULL, count INTEGER NOT NULL DEFAULT 0, CHECK(time >= 0.0 AND count >= 0))")
+	db_path: Path = dir_path.joinpath("client.sqlite3")
 
+	mkdirp(dir_path)
+
+	# Initialize the client database
+	if os.path.lexists(db_path):
+		os.remove(db_path)
+	with sqlite3.connect(db_path, isolation_level="EXCLUSIVE") as connection:
+		connection.execute("CREATE TABLE request(id TEXT NOT NULL PRIMARY KEY, time REAL NOT NULL, count INTEGER NOT NULL DEFAULT 0, CHECK(time >= 0.0 AND count >= 0))")
+		connection.commit()
+	del connection
 
 	def __init__(self, id: str) -> None:
 		self.id = id
 
 	async def __aenter__(self) -> None:
-		# TODO: unsafe
-		async with aiosqlite.connect(self.db_path, isolation_level=None) as db:
-			db.row_factory = aiosqlite.Row
-			e = 0
-			async with db.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
+		now = time.time()
+		async with aiosqlite.connect(self.db_path, isolation_level=None) as connection:
+			connection.row_factory = aiosqlite.Row
+			hit = False
+			async with connection.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
 				async for row in cursor:
-					e += 1
+					hit = True
 					count = int(row["count"])
-					st = float(row["time"])
-			t = time.time()
-			if e > 0:
-				w = config.server.limit.rate.window
-				m = config.server.limit.rate.max_request
-				if t - st >= w:
-					await db.execute("UPDATE request SET time = ?, count = 1 WHERE id = ?", (t, self.id))
+					window_start = float(row["time"])
+			if hit:
+				if now - window_start >= config.server.limit.rate.window:
+					await connection.execute("UPDATE request SET time = ?, count = 1 WHERE id = ?", (now, self.id))
 				else:
-					if count >= m:
+					if count >= config.server.limit.rate.max_request:
 						raise RateLimitException()
 					else:
-						await db.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
+						await connection.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
 			else:
-				await db.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, t, 1))
+				await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
 
 	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
 		pass

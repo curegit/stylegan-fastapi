@@ -1,8 +1,11 @@
 import os
+import shutil
 import inspect
 from pathlib import Path
 
-def mkdirp(path: str | Path) -> None:
+def mkdirp(path: str | Path, recreate=False) -> None:
+	if recreate:
+		shutil.rmtree(path)
 	os.makedirs(path, exist_ok=True)
 
 def resolve_path(path: str | Path) -> Path:

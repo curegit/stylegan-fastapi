@@ -15,6 +15,7 @@ import logging
 logger: logging.Logger = logging.getLogger(config.server.logger)
 del logging
 
+# Optimize Chainer
 import utilities.chainer
 utilities.chainer.config_valid(faster=True)
 del utilities

@@ -24,8 +24,7 @@ from api import model
 models: dict[str, model.GeneratorModel] = {
 	key: model.GeneratorModel.load(
 		filepath=(
-			env.toml_path.parent if val.relative
-			else utils.resolve_path(".")
+			env.toml_path.parent if val.relative else utils.resolve_path(".")
 		).joinpath(val.file).resolve(),
 		id=key,
 		name=val.name,

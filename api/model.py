@@ -35,6 +35,7 @@ class GeneratorModel:
 		self.description = description
 		self.lossy = lossy
 		self.xp = generator.xp
+		logger.info(f"Calculating the mean W for '{name}'.")
 		self.mean_ws = [generator.calculate_mean_w(categories=[c]) for c in range(self.generator.categories)]
 
 	def generate_latent(self):

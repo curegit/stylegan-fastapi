@@ -10,10 +10,13 @@ del sys
 # Read configuration and define at top level
 config: conf.Config = conf.load_config(env.toml_path)
 
-#
+# Create a logger
 import logging
-logger: logging.Logger = logging.getLogger(config.server.logger)
+logger: logging.Logger = logging.getLogger(__name__ if config.server.logger is None else config.server.logger)
 del logging
+
+# Create the runtime directory
+utils.mkdirp(config.server.tmp_dir)
 
 # Optimize Chainer
 import utilities.chainer

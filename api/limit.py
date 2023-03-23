@@ -193,9 +193,10 @@ class RateLimiter:
 				else:
 					await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
 			except RateLimitException:
+				await connection.commit()
 				raise
 			except:
-				connection.rollback()
+				await connection.rollback()
 				raise
 			else:
-				connection.commit()
+				await connection.commit()

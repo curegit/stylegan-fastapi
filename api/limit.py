@@ -43,7 +43,7 @@ class SignallingBlock:
 
 	async def __aenter__(self) -> None:
 		start = time.monotonic()
-		self.lock = filelock.SoftFileLock(self.lock_path)
+		self.lock = filelock.UnixFileLock(self.lock_path)
 		while True:
 			try:
 				self.lock.acquire(blocking=False)

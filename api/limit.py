@@ -1,5 +1,6 @@
 import os
 import os.path
+import math
 import time
 import glob
 import asyncio
@@ -168,23 +169,26 @@ class RateLimiter:
 	def __init__(self, id: str) -> None:
 		self.id = id
 
-	async def check(self) -> None:
+	async def check(self, timeout=3.0) -> None:
 		now = time.time()
-		async with aiosqlite.connect(self.db_path, isolation_level=None) as connection:
+		async with aiosqlite.connect(self.db_path, isolation_level="EXCLUSIVE", timeout=timeout) as connection:
 			connection.row_factory = aiosqlite.Row
-			hit = False
-			async with connection.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
-				async for row in cursor:
-					hit = True
-					count = int(row["count"])
-					window_start = float(row["time"])
-			if hit:
-				if now - window_start >= config.server.limit.rate.window:
-					await connection.execute("UPDATE request SET time = ?, count = 1 WHERE id = ?", (now, self.id))
-				else:
-					if count >= config.server.limit.rate.max_request:
-						raise RateLimitException()
+			async with connection as transaction:
+				hit = False
+				async with transaction.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
+					async for row in cursor:
+						hit = True
+						count = int(row["count"])
+						window_start = float(row["time"])
+				if hit:
+					elapsed = now - window_start
+					if elapsed >= config.server.limit.rate.window:
+						await transaction.execute("UPDATE request SET time = ?, count = 1 WHERE id = ?", (now, self.id))
 					else:
-						await connection.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
-			else:
-				await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
+						if count >= config.server.limit.rate.max_request:
+							retry_after = max(1, math.ceil(config.server.limit.rate.window - elapsed))
+							raise RateLimitException(retry_after)
+						else:
+							await transaction.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
+				else:
+					await transaction.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))

@@ -7,7 +7,8 @@ import sqlite3
 import aiosqlite
 import filelock
 from pathlib import Path
-from api import config
+from itertools import chain
+from api import config, logger
 from api.exceptions.client import BlockTimeoutException
 from api.exceptions.client import RateLimitException
 from api.exceptions.server import OverloadedException
@@ -76,6 +77,7 @@ class ConcurrencyLimiter:
 		start_ns = time.monotonic_ns()
 		self.lock = filelock.SoftFileLock(self.lock_dir_path.joinpath(f"{start_ns}.lock"))
 		self.queue_lock = None
+		self.clean_flag = False
 
 		# When it has spare power, just go
 		runnings = glob.glob("*.lock", root_dir=self.lock_dir_path)
@@ -88,6 +90,7 @@ class ConcurrencyLimiter:
 			return
 
 		# If it is busy unluckily, join the queue and wait
+		self.clean_flag = True
 		join_time = start_ns
 		try:
 			# Quit when the queue is too long
@@ -127,6 +130,22 @@ class ConcurrencyLimiter:
 
 	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
 		self.lock.release()
+		# Failsafe to avoid deadlocks due to process crashes
+		if self.clean_flag:
+			self.clean()
+
+	@classmethod
+	def clean(cls) -> None:
+		now = time.monotonic_ns()
+		for f in chain(glob.glob("*.lock", root_dir=cls.lock_dir_path), glob.glob("*.lock", root_dir=cls.queue_dir_path)):
+			try:
+				t = int(Path(f).stem)
+				# This threshold is heuristic
+				if now - t > 30 * config.server.limit.concurrency.timeout:
+					logger.warning("Deadlock detected")
+					os.remove(f)
+			except:
+				pass
 
 
 # Fixed window-based rate limiter

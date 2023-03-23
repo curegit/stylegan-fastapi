@@ -43,7 +43,7 @@ class RequestLimitException(HTTPException[RequestLimitError]):
 		if retry_after is None:
 			super().__init__(RequestLimitError(detail=msg))
 		else:
-			super().__init__(RequestLimitError(detail=msg), headers={"Retry-After": retry_after})
+			super().__init__(RequestLimitError(detail=msg), headers={"Retry-After": str(retry_after)})
 
 
 class BlockTimeoutException(RequestLimitException):

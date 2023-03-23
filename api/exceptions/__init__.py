@@ -1,5 +1,5 @@
 import types
-from typing import TypeVar, Generic, Protocol, Self, Any
+from typing import TypeVar, Generic, Protocol, Self
 from collections.abc import Callable, Iterable
 from fastapi import HTTPException as FastAPIHTTPException
 from api.schemas.errors import HTTPError
@@ -26,7 +26,7 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 		cls.reified[key] = new_exception_class
 		return new_exception_class
 
-	def __init__(self, error: T, headers: dict[str, Any] | None = None) -> None:
+	def __init__(self, error: T, headers: dict[str, str] | None = None) -> None:
 			super().__init__(self.status_code, error.detail, headers)
 
 
@@ -55,8 +55,8 @@ def raises_from(*functions: Raises[F]) -> Iterable[type[HTTPException]]:
 	for function in functions:
 		yield from function.raises
 
-def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, Any]]:
-	response_dict: dict[int, dict[str, Any]] = {}
+def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, str]]:
+	response_dict: dict[int, dict[str, str]] = {}
 	for exception in exceptions:
 		if exception.status_code in response_dict:
 			response = response_dict[exception.status_code]

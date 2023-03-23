@@ -1,6 +1,6 @@
 from hashlib import blake2b
 from starlette.requests import Request
-from api import config
+from api import config, logger
 from api.exceptions.server import BadGatewayException
 
 def get_client_id(request: Request) -> str:
@@ -9,6 +9,7 @@ def get_client_id(request: Request) -> str:
 			match request.headers.get(name):
 				case str() as value if value:
 					return hash_client(value)
+		logger.warning("Encountered a client whose IP address is not set in the header as expected")
 		raise BadGatewayException("client IP address is not set in the header as expected")
 	else:
 		return hash_client(client_ip_address(request))
@@ -17,6 +18,7 @@ def client_ip_address(request: Request) -> str:
 	match request.client:
 		case (host, port) if host:
 			return host
+	logger.warning("Encountered a client whose IP address is not set")
 	raise BadGatewayException("client IP address is not set")
 
 def hash_client(client: str) -> str:

@@ -173,9 +173,9 @@ class RateLimiter:
 		now = time.time()
 		async with aiosqlite.connect(self.db_path, isolation_level="EXCLUSIVE", timeout=timeout) as connection:
 			connection.row_factory = aiosqlite.Row
-			async with connection as transaction:
+			try:
 				hit = False
-				async with transaction.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
+				async with connection.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
 					async for row in cursor:
 						hit = True
 						count = int(row["count"])
@@ -183,12 +183,19 @@ class RateLimiter:
 				if hit:
 					elapsed = now - window_start
 					if elapsed >= config.server.limit.rate.window:
-						await transaction.execute("UPDATE request SET time = ?, count = 1 WHERE id = ?", (now, self.id))
+						await connection.execute("UPDATE request SET time = ?, count = 1 WHERE id = ?", (now, self.id))
 					else:
 						if count >= config.server.limit.rate.max_request:
 							retry_after = max(1, math.ceil(config.server.limit.rate.window - elapsed))
 							raise RateLimitException(retry_after)
 						else:
-							await transaction.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
+							await connection.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
 				else:
-					await transaction.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
+					await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
+			except RateLimitException:
+				raise
+			except:
+				connection.rollback()
+				raise
+			else:
+				connection.commit()

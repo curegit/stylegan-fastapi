@@ -124,6 +124,9 @@ class ConcurrencyLimiter:
 				t = time.monotonic() - start
 				if t >= self.timeout:
 					raise OverloadedException()
+		except OverloadedException:
+			logger.warning("Returned 503 Service Unavailable")
+			raise
 		finally:
 			if self.queue_lock is not None:
 				self.queue_lock.release()

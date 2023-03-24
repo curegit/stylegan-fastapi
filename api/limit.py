@@ -78,7 +78,6 @@ class ConcurrencyLimiter:
 		start_ns = time.monotonic_ns()
 		self.lock = filelock.SoftFileLock(self.lock_dir_path.joinpath(f"{start_ns}.lock"))
 		self.queue_lock = None
-		self.clean_flag = False
 
 		# When it has spare power, just go
 		runnings = glob.glob("*.lock", root_dir=self.lock_dir_path)
@@ -91,7 +90,6 @@ class ConcurrencyLimiter:
 			return
 
 		# If it is busy unluckily, join the queue and wait
-		self.clean_flag = True
 		join_time = start_ns
 		try:
 			# Quit when the queue is too long
@@ -125,16 +123,17 @@ class ConcurrencyLimiter:
 				t = time.monotonic() - start
 				if t >= self.timeout:
 					raise OverloadedException()
+		except:
+			self.clean()
+			raise
 		finally:
 			if self.queue_lock is not None:
 				self.queue_lock.release()
 
 	async def __aexit__(self, exc_type, exc_value, traceback) -> None:
 		self.lock.release()
-		# Failsafe to avoid deadlocks due to process crashes
-		if self.clean_flag:
-			self.clean()
 
+	# Failsafe to avoid deadlocks due to process crashes
 	@classmethod
 	def clean(cls) -> None:
 		now = time.monotonic()
@@ -143,7 +142,7 @@ class ConcurrencyLimiter:
 				time_ns = int(Path(f).stem)
 				dt = now - (time_ns / 10 ** 9)
 				# This threshold is heuristic
-				dt_threshold = config.server.limit.concurrency.timeout + 20 * config.server.limit.concurrency.poll
+				dt_threshold = 5 * config.server.limit.concurrency.timeout + 20 * config.server.limit.concurrency.poll
 				if dt > dt_threshold:
 					logger.warning("Deadlock detected")
 					os.remove(f)

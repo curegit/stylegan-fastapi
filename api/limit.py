@@ -91,6 +91,7 @@ class ConcurrencyLimiter:
 
 		# If it is busy unluckily, join the queue and wait
 		join_time = start_ns
+		self.clean()
 		try:
 			# Quit when the queue is too long
 			waitings = glob.glob("*.lock", root_dir=self.queue_dir_path)
@@ -123,9 +124,6 @@ class ConcurrencyLimiter:
 				t = time.monotonic() - start
 				if t >= self.timeout:
 					raise OverloadedException()
-		except:
-			self.clean()
-			raise
 		finally:
 			if self.queue_lock is not None:
 				self.queue_lock.release()
@@ -142,7 +140,7 @@ class ConcurrencyLimiter:
 				time_ns = int(Path(f).stem)
 				dt = now - (time_ns / 10 ** 9)
 				# This threshold is heuristic
-				dt_threshold = 5 * config.server.limit.concurrency.timeout + 20 * config.server.limit.concurrency.poll
+				dt_threshold = 3 * config.server.limit.concurrency.timeout + 10 * config.server.limit.concurrency.poll
 				if dt > dt_threshold:
 					logger.warning("Deadlock detected")
 					os.remove(f)

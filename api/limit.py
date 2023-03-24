@@ -138,15 +138,16 @@ class ConcurrencyLimiter:
 	@classmethod
 	def clean(cls) -> None:
 		now = time.monotonic()
-		for f in chain(glob.glob("*.lock", root_dir=cls.lock_dir_path), glob.glob("*.lock", root_dir=cls.queue_dir_path)):
+		runs = [(cls.lock_dir_path.joinpath(f), int(Path(f).stem)) for f in glob.glob("*.lock", root_dir=cls.lock_dir_path)]
+		waits = [(cls.queue_dir_path.joinpath(f), int(Path(f).stem)) for f in glob.glob("*.lock", root_dir=cls.queue_dir_path)]
+		for filepath, time_ns in chain(runs, waits):
 			try:
-				time_ns = int(Path(f).stem)
 				dt = now - (time_ns / 10 ** 9)
 				# This threshold is heuristic
 				dt_threshold = 3 * config.server.limit.concurrency.timeout + 10 * config.server.limit.concurrency.poll
 				if dt > dt_threshold:
 					logger.warning("Deadlock detected")
-					os.remove(f)
+					os.remove(filepath)
 			except:
 				pass
 

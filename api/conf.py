@@ -66,7 +66,7 @@ class Config(BaseModel, extra="forbid"):
 	docs: bool = True
 	redoc: bool = True
 	server: ServerConfig = ServerConfig()
-	models: dict[str, ModelConfig] = Field(min_items=1)
+	models: dict[str, ModelConfig]
 
 
 def load_config(filepath: str | Path) -> Config:

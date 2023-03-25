@@ -6,7 +6,7 @@ from api.operations import routers
 
 class StyleGANFastAPI(FastAPI):
 
-	def __init__(self, *, debug: bool = False):
+	def __init__(self, *, debug: bool = False, **kwargs):
 		super().__init__(
 			debug=debug,
 			title=config.title,
@@ -14,6 +14,7 @@ class StyleGANFastAPI(FastAPI):
 			version=config.version,
 			docs_url=("/docs" if config.docs else None),
 			redoc_url=("/redoc" if config.redoc else None),
+			**kwargs,
 		)
 
 		# Include sectioned subrouters

@@ -29,7 +29,8 @@ class StyleGANFastAPI(FastAPI):
 
 		# Configure cross-origin resource sharing
 		if config.server.http.cors.enabled:
-			self.add_middleware(CORSMiddleware,
+			self.add_middleware(
+				CORSMiddleware,
 				allow_origins=config.server.http.cors.origins,
 				allow_credentials=False,
 				allow_methods=["*"],

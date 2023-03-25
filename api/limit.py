@@ -159,8 +159,6 @@ class RateLimiter:
 
 	db_path: Path = dir_path.joinpath("client.sqlite3")
 
-	mkdirp(dir_path)
-
 	# Initialize the client database
 	if os.path.lexists(db_path):
 		os.remove(db_path)

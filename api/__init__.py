@@ -34,7 +34,7 @@ models: dict[str, model.GeneratorModel] = {
 		name=val.name,
 		description=val.description,
 		gpu=val.gpu,
-		lossy=(config.lossy if val.lossy is None else val.lossy),
+		lossy=val.lossy,
 	) for key, val in config.models.items()
 }
 

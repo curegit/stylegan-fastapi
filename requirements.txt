@@ -2,10 +2,6 @@ fastapi
 starlette
 uvicorn[standard]
 pydantic
-chainer >= 7.2
-numpy >= 1.17
-h5py
-pillow >= 9.1
 aiosqlite
 filelock
-tqdm
+-r core/requirements.txt

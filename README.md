@@ -30,11 +30,17 @@ Note that it is for trial or debugging, and
 
 ## Configuration
 
-```
-STYLEGAN_TOML="./custom_config.toml"
-```
+StyleGAN FastAPI configuration uses the TOML format.
+The default TOML file is located in `default/config.toml`.
 
+You can specify another TOML file to be read by setting the `STYLEGAN_TOML` environment variable.
+`STYLEGAN_TOML` must be an absolute path or a relative path from the working directory to the TOML file.
+Note that the `STYLEGAN_TOML` environment variable must be set before importing the `api` Python package.
 
+```sh
+export STYLEGAN_TOML="./custom_config.toml"
+uvicorn main:app
+```
 
 `STYLEGAN_TOML` can be absolute or relative from the working directory.
 

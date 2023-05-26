@@ -30,7 +30,7 @@ Note that it is for trial or debugging, and
 
 ## Configuration
 
-StyleGAN FastAPI configuration uses the TOML format.
+StyleGAN FastAPI uses the TOML format for configuration.
 The default TOML file is located in `default/config.toml`.
 
 You can specify another TOML file to be read by setting the `STYLEGAN_TOML` environment variable.
@@ -42,9 +42,24 @@ export STYLEGAN_TOML="./custom_config.toml"
 uvicorn main:app
 ```
 
-`STYLEGAN_TOML` can be absolute or relative from the working directory.
+### Configuration TOML Specification
 
-### Configuration file spec
+standard TOML
+complete raw schema definition in Python  `api/conf.py`
+
+
+#### General Settings (root table)
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `title` | String | The title of the software. |
+| `version` | String | The version number of the software. |
+| `description` | String | A brief description of the software. |
+| `lossy` | String | A boolean value indicating whether lossy compression is used. The default is `false`. |
+| `docs` | String | A boolean value indicating whether documentation is enabled.  |
+| `redoc` | String | A boolean value indicating whether ReDoc is enabled. |
+
+
 
 models: relative path from working directory
 

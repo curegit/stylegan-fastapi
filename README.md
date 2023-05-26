@@ -14,19 +14,19 @@ Uvicorn is recommended as ASGI middleware, but other alterbatives such as Hyperc
 
 process replication using Gunicorn and Uvicorn.
 
-## Run the default server
+## Quick Start: Run the Default Server
 
 This repository includes the default server configuration with some trained models.
-You can try
+You can try out quickly as below.
 
 ```sh
-cd
-uvicorn
+git clone --recursive https://github.com/curegit/stylegan-fastapi.git
+cd stylegan-fastapi
+pip3 install -r requirements.txt
+uvicorn main:app --reload
 ```
 
-Note that it is for trial or debugging, and
-
-
+Note that it is only for trial or debugging, and not suitable for production because it is not replication-enabled.
 
 ## Configuration
 

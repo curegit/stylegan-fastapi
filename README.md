@@ -30,10 +30,10 @@ Note that it is only for trial or debugging, and not suitable for production bec
 
 ## Configuration
 
-StyleGAN FastAPI uses the TOML format for configuration.
-The default TOML file is located in `default/config.toml`.
+StyleGAN FastAPI can be customized by using a configuration file.
+StyleGAN FastAPI uses the TOML format for configuration, and the default TOML file is located in `default/config.toml`.
 
-You can specify another TOML file to be read by setting the `STYLEGAN_TOML` environment variable.
+You can specify a different TOML file to use by setting the `STYLEGAN_TOML` environment variable.
 `STYLEGAN_TOML` must be an absolute path or a relative path from the working directory to the TOML file.
 Note that the `STYLEGAN_TOML` environment variable must be set before importing the `api` Python package.
 

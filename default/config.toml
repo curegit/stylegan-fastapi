@@ -1,12 +1,12 @@
 title = "StyleGAN API"
 version = "1.0.0"
-description = "画像生成"
+description = "Simplified Web REST API of the StyleGANs"
 lossy = false
 docs = true
 redoc = true
 
 [server]
-gpu = -1
+gpu = false
 logger = "uvicorn"
 tmp_dir = "./run"
 
@@ -38,17 +38,38 @@ window = 3600
 max_request = 200
 
 [models]
-[models.mnist]
-file = "models/MNIST32.hdf5"
+[models.ffhq]
+file = "../core/models/ffhq.hdf5"
 relative = true
-name = "MNIST"
+name = "FFHQ"
+description = "Flickr-Faces-HQ"
+lossy = true
 
 [models.afhq]
-file = "models/動物フリッカー.hdf5"
+file = "../core/models/afhq.hdf5"
 relative = true
 name = "AFHQ"
-gpu = false
+description = "Animal Faces-HQ"
 lossy = true
-[models.afhq.labels]
-cat = "Cat"
 
+[models.anime]
+file = "../core/models/anime.hdf5"
+relative = true
+name = "Anime"
+description = "Anime Faces"
+
+[models.mnist]
+file = "../core/models/mnist.hdf5"
+relative = true
+name = "MNIST"
+description = "Hand-written grayscale digits from 0-9"
+lossy = false
+gpu = false
+
+[models.k49]
+file = "../core/models/k49.hdf5"
+relative = true
+name = "Kuzushiji-49"
+description = "48 Hiragana characters and one Hiragana iteration mark"
+lossy = false
+gpu = false

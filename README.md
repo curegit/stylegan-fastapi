@@ -16,7 +16,7 @@ process replication using Gunicorn and Uvicorn.
 
 ## Quick Start: Run the Default Server
 
-This repository includes the default server configuration with some trained models.
+This repository includes the default server configuration using Uvicorn with some trained models.
 You can try out quickly as below.
 
 ```sh
@@ -26,7 +26,7 @@ pip3 install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Note that it is only for trial or debugging, and not suitable for production because it is not replication-enabled.
+Note that it is only for trial or debugging, and not suitable for production because it is not process-replication-enabled.
 
 ## Configuration
 

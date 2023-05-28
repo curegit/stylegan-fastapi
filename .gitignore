@@ -5,3 +5,4 @@
 *.sqlite3
 *.lock
 __pycache__/
+run/

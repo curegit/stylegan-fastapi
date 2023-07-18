@@ -55,7 +55,6 @@ class ModelConfig(BaseModel, extra="forbid"):
 	description: str = ""
 	gpu: bool | int | None = None
 	lossy: bool | None = None
-	labels: dict[str, str] | None = None
 
 
 class Config(BaseModel, extra="forbid"):

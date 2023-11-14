@@ -34,7 +34,7 @@ async def latent(latent: RegenerateRequest | None = Body(None), model: Generator
 		return None
 	try:
 		arr = from_npy_base64(latent)
-	except:
+	except Exception:
 		raise DeserializationException()
 	if not validate_array(arr):
 		raise ArrayValidationException()

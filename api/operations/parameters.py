@@ -13,14 +13,14 @@ async def model(model_id: str = Path(min_length=1)):
 	return model
 
 @raises(LabelNotFoundException, *raises_from(model))
-async def label(label: str | None = Query(None, min_length=1), model: GeneratorModel = Depends(model)) -> str | None:
+async def label(label: str | None = Query(None, min_length=1), model: GeneratorModel = Depends(model)) -> tuple[str, int] | None:
 	if label is None:
 		return None
 	elif not model.conditional:
 		raise LabelNotFoundException()
 	elif label not in model.labels:
 		raise LabelNotFoundException()
-	return label
+	return label, model.generator.lookup_label(label)
 
 async def psi(psi: float = Query(1.0, gt=0, le=2)):
 	return psi
@@ -34,7 +34,7 @@ async def latent(latent: RegenerateRequest | None = Body(None), model: Generator
 		return None
 	try:
 		arr = from_npy_base64(latent)
-	except:
+	except Exception:
 		raise DeserializationException()
 	if not validate_array(arr):
 		raise ArrayValidationException()

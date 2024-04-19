@@ -6,7 +6,7 @@ class Model(BaseModel):
 	name: str = Field(example="My Animal Model")
 	description: str
 	conditional: bool = Field(example=True)
-	labels: list[str] | None = Field(min_items=1, unique_items=True, example=["Cat", "Dog", "Unicorn"])
+	labels: list[str] | None = Field(min_items=1, example=["Cat", "Dog", "Unicorn"])
 	width: int = Field(ge=1, example=256)
 	height: int = Field(ge=1, example=256)
 	lossy: bool = Field(example=False)

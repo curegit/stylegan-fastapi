@@ -5,12 +5,12 @@ from pydantic import BaseModel, Field
 
 class CORSConfig(BaseModel, extra="forbid"):
 	enabled: bool = False
-	origins: list[str] = Field([], unique_items=True)
+	origins: list[str] = []
 
 
 class HTTPConfig(BaseModel, extra="forbid"):
 	forwarded: bool = False
-	forwarded_headers: list[str] = Field(["Forwarded"], unique_items=True)
+	forwarded_headers: list[str] = ["Forwarded"]
 	cors: CORSConfig = CORSConfig()
 
 

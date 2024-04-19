@@ -1,4 +1,5 @@
 import tomllib
+from sys import float_info
 from pathlib import Path
 from pydantic import BaseModel, Field
 
@@ -16,7 +17,7 @@ class HTTPConfig(BaseModel, extra="forbid"):
 class SignallingBlockConfig(BaseModel, extra="forbid"):
 	enabled: bool = False
 	timeout: float = Field(10.0, gt=0)
-	poll: float = Field(0.2, gt=0)
+	poll: float = Field(0.2, gt=float_info.min)
 
 
 class ConcurrencyLimitConfig(BaseModel, extra="forbid"):
@@ -24,12 +25,12 @@ class ConcurrencyLimitConfig(BaseModel, extra="forbid"):
 	max_concurrency: int = Field(4, gt=0)
 	max_queue: int = Field(8, ge=0)
 	timeout: float = Field(10.0, gt=0)
-	poll: float = Field(0.1, gt=0)
+	poll: float = Field(0.1, gt=float_info.min)
 
 
 class RateLimitConfig(BaseModel, extra="forbid"):
 	enabled: bool = False
-	window: float = Field(3600.0, gt=0)
+	window: float = Field(3600.0, gt=float_info.min)
 	max_request: int = Field(100, gt=0)
 
 

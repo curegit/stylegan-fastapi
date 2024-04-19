@@ -4,14 +4,12 @@ from io import BytesIO
 from numpy import ndarray
 from api.types import Base64
 
-
 def to_npy_base64(array: ndarray) -> Base64:
 	io = BytesIO()
 	np.save(io, array, allow_pickle=False)
 	seq = io.getvalue()
 	string = base64.b64encode(seq).decode("ascii")
 	return string
-
 
 def from_npy_base64(npy: Base64) -> ndarray:
 	bs = base64.b64decode(npy)
@@ -21,8 +19,7 @@ def from_npy_base64(npy: Base64) -> ndarray:
 			return array
 	raise RuntimeError()
 
-
-def validate_array(array: ndarray, shape: tuple[int] | tuple[()] | None = None, dtype: str | type | None = None) -> bool:
+def validate_array(array: ndarray, shape: tuple[int, ...] | tuple[()] | None = None, dtype: str | type | None = None) -> bool:
 	if shape is not None:
 		if array.shape != shape:
 			return False
@@ -30,7 +27,6 @@ def validate_array(array: ndarray, shape: tuple[int] | tuple[()] | None = None, 
 		if array.dtype != dtype:
 			return False
 	return True
-
 
 def clamp_array(array: ndarray, min: int | float | None, max: int | float | None, replace_nan: bool | int | float = True) -> ndarray:
 	match replace_nan:

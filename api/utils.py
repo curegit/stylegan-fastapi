@@ -12,7 +12,7 @@ def mkdirp(path: str | Path, recreate: bool = False) -> None:
 def resolve_path(path: str | Path, *, strict: bool = False) -> Path:
 	return Path(path).resolve(strict=strict)
 
-def file_rel_path(relpath: str) -> Path:
+def file_rel_path(relpath: str, *, strict: bool = False) -> Path:
 	filename = inspect.stack()[1].filename
 	dirpath = Path(filename).resolve().parent
-	return dirpath.joinpath(relpath).resolve()
+	return dirpath.joinpath(relpath).resolve(strict=strict)

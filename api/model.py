@@ -35,7 +35,7 @@ class GeneratorModel:
 		self.description = description
 		self.lossy = lossy
 		self.xp = generator.xp
-		logger.info(f"Calculating the mean W for '{name}'.")
+		logger.info(f"Calculating the mean W for '{name}' ...")
 		self.mean_ws = [generator.calculate_mean_w(categories=[c]) for c in range(self.generator.categories)]
 
 	def generate_latent(self):
@@ -46,9 +46,10 @@ class GeneratorModel:
 		pass
 
 
-	def generate(self, label: str | None = None, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, set | None]:
+	def generate(self, label: int | None = None, psi: float = 1.0) -> tuple[ndarray, ndarray, Image, str | None]:
 		z = self.generator.generate_latents(1)
 		c = self.generator.generate_conditions(1)[1] if self.generator.conditional else None
+		label =
 		(w, *ws), y = self.generator(z, c, psi=psi)
 		z.to_cpu()
 		w.to_cpu()
@@ -60,7 +61,7 @@ class GeneratorModel:
 		return to_npy_base64(z), to_npy_base64(w), self.encode_image(image), label
 
 
-	def blend_styles(self):
+	def combine_styles(self):
 		pass
 
 	def mix_styles(self):

@@ -5,7 +5,6 @@ from api import config, logger
 from api.operations import routers
 
 class StyleGANFastAPI(FastAPI):
-
 	def __init__(self, *, debug: bool = False, **kwargs):
 		super().__init__(
 			debug=debug,

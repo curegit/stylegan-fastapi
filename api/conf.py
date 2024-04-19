@@ -50,7 +50,7 @@ class ServerConfig(BaseModel, extra="forbid"):
 
 class ModelConfig(BaseModel, extra="forbid"):
 	file: str
-	relative : bool = False
+	relative: bool = False
 	name: str = ""
 	description: str = ""
 	gpu: bool | int | None = None

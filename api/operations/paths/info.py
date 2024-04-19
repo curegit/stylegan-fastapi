@@ -4,8 +4,11 @@ from api.schemas import Model
 
 router = APIRouter(tags=["info"])
 
-@router.get("/", response_model=str)
+@router.get("/", operation_id="root", response_model=str)
 async def welcome():
+	"""
+	hello world message
+	"""
 	return "Hello"
 
 @router.get("/models/", response_model=list[Model])

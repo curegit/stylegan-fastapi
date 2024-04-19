@@ -1,8 +1,8 @@
 from api.exceptions import HTTPException
 from api.schemas.errors import HTTPError
 
-class BadGatewayException(HTTPException):
 
+class BadGatewayException(HTTPException):
 	status_code = 502
 
 	def __init__(self, msg: str | None = None) -> None:
@@ -10,7 +10,6 @@ class BadGatewayException(HTTPException):
 
 
 class OverloadedException(HTTPException):
-
 	status_code = 503
 
 	def __init__(self) -> None:

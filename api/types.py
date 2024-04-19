@@ -1,8 +1,7 @@
-from typing import TypeAlias
 from collections.abc import Iterator
 from itertools import cycle
 
-Base64: TypeAlias = str
+type Base64 = str
 
 base64_examples: Iterator[Base64] = cycle([
 	"TWVybWFpZCBNZWxvZHkg8J+OtiBQaWNoaSBQaWNoaSBQaXRjaA==",

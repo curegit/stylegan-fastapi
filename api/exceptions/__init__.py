@@ -2,16 +2,14 @@ import types
 from typing import TypeVar, Generic, Protocol, Self
 from collections.abc import Callable, Iterable
 from fastapi import HTTPException as FastAPIHTTPException
+from reification import Reified
 from api.schemas.errors import HTTPError
 
-T = TypeVar("T", bound=HTTPError)
 
-class HTTPException(FastAPIHTTPException, Generic[T]):
-
+class HTTPException[T: HTTPError](Reified, FastAPIHTTPException):
 	status_code: int = 400
 
-	error_model: type[HTTPError] = HTTPError
-
+	"""
 	reified: dict[type, type] = {}
 
 	def __class_getitem__(cls, key: type[T]) -> type[Self]:
@@ -25,17 +23,22 @@ class HTTPException(FastAPIHTTPException, Generic[T]):
 		new_exception_class.error_model = key
 		cls.reified[key] = new_exception_class
 		return new_exception_class
+	"""
 
 	def __init__(self, error: T, headers: dict[str, str] | None = None) -> None:
-			super().__init__(self.status_code, error.detail, headers)
+		super().__init__(self.status_code, error.detail, headers)
+
+	@classmethod
+	def get_error_model(cls) -> type[HTTPError]:
+		if issubclass(cls.targ, HTTPError):
+			return cls.targ
+		else:
+			return HTTPError
 
 
-C = TypeVar("C", bound=Callable, covariant=True)
-
-class Raises(Protocol[C]):
-
+class Raises[T: Callable](Protocol):
 	@property
-	def __call__(self) -> C:
+	def __call__(self) -> T:
 		raise NotImplementedError()
 
 	@property
@@ -43,24 +46,25 @@ class Raises(Protocol[C]):
 		raise NotImplementedError()
 
 
-F = TypeVar("F", bound=Callable)
-
-def raises(*exceptions: type[HTTPException]) -> Callable[[F], Raises[F]]:
-	def decorator(function: F) -> Raises[F]:
+def raises[T: Callable](*exceptions: type[HTTPException]) -> Callable[[T], Raises[T]]:
+	def decorator(function: T) -> Raises[T]:
 		function.raises = list(exceptions)
 		return function
+
 	return decorator
 
-def raises_from(*functions: Raises[F]) -> Iterable[type[HTTPException]]:
+
+def raises_from(*functions: Raises) -> Iterable[type[HTTPException]]:
 	for function in functions:
 		yield from function.raises
+
 
 def responses(*exceptions: type[HTTPException]) -> dict[int, dict[str, str]]:
 	response_dict: dict[int, dict[str, str]] = {}
 	for exception in exceptions:
 		if exception.status_code in response_dict:
 			response = response_dict[exception.status_code]
-			response["model"] = response["model"] | exception.error_model
+			response["model"] = response["model"] | exception.get_error_model()
 		else:
-			response_dict[exception.status_code] = {"model": exception.error_model}
+			response_dict[exception.status_code] = {"model": exception.get_error_model()}
 	return response_dict

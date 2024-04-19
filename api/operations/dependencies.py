@@ -10,7 +10,7 @@ async def client_id(request: Request) -> str:
 	return get_client_id(request)
 
 @raises(BlockTimeoutException)
-async def signalling_block(id: str = Depends(client_id, use_cache=True)) -> bool:
+async def signalling_block(id: str = Depends(client_id, use_cache=True)):
 	if config.server.limit.block.enabled:
 		async with SignallingBlock(id):
 			yield True
@@ -26,7 +26,7 @@ async def rate_limit(id: str = Depends(client_id, use_cache=True)) -> bool:
 		return False
 
 @raises(OverloadedException)
-async def concurrency_limit() -> bool:
+async def concurrency_limit():
 	if config.server.limit.concurrency.enabled:
 		async with ConcurrencyLimiter():
 			yield True

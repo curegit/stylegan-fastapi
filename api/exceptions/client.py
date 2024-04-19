@@ -3,7 +3,6 @@ from api.schemas.errors import HTTPNotFoundError, NotFoundError, Deserialization
 
 
 class NotFoundException(HTTPException[HTTPNotFoundError]):
-
 	status_code = 404
 
 	def __init__(self, type: str, name: str, msg: str) -> None:
@@ -23,7 +22,6 @@ class LabelNotFoundException(NotFoundException):
 
 
 class DeserializationException(HTTPException[DeserializationError]):
-
 	status_code = 415
 
 	def __init__(self) -> None:
@@ -31,12 +29,10 @@ class DeserializationException(HTTPException[DeserializationError]):
 
 
 class ArrayValidationException(HTTPException):
-
 	status_code = 422
 
 
 class RequestLimitException(HTTPException[RequestLimitError]):
-
 	status_code = 429
 
 	def __init__(self, msg: str, retry_after: int | None = None) -> None:

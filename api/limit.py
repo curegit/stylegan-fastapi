@@ -15,6 +15,7 @@ from api.exceptions.client import RateLimitException
 from api.exceptions.server import OverloadedException
 from api.utils import mkdirp, resolve_path
 
+
 # Delay the execution of a block for at least some seconds
 class SpeedLimit:
 
@@ -33,7 +34,6 @@ class SpeedLimit:
 
 # Locking mechanisms to prevent simultaneous requests from the same client
 class SignallingBlock:
-
 	dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("block")
 
 	mkdirp(dir_path, recreate=True)
@@ -62,7 +62,6 @@ class SignallingBlock:
 
 # Crude concurrency control to limit computing power usage
 class ConcurrencyLimiter:
-
 	lock_dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("lock")
 
 	queue_dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("queue")
@@ -142,19 +141,18 @@ class ConcurrencyLimiter:
 		waits = [(cls.queue_dir_path.joinpath(f), int(Path(f).stem)) for f in glob.glob("*.lock", root_dir=cls.queue_dir_path)]
 		for filepath, time_ns in chain(runs, waits):
 			try:
-				dt = now - (time_ns / 10 ** 9)
+				dt = now - (time_ns / 10**9)
 				# This threshold is heuristic
 				dt_threshold = 3 * config.server.limit.concurrency.timeout + 10 * config.server.limit.concurrency.poll
 				if dt > dt_threshold:
 					logger.warning("Deadlock detected")
 					os.remove(filepath)
-			except:
+			except Exception:
 				pass
 
 
 # Fixed window-based rate limiter
 class RateLimiter:
-
 	dir_path: Path = resolve_path(config.server.tmp_dir)
 
 	db_path: Path = dir_path.joinpath("client.sqlite3")
@@ -176,7 +174,7 @@ class RateLimiter:
 			connection.row_factory = aiosqlite.Row
 			try:
 				hit = False
-				async with connection.execute("SELECT * FROM request WHERE id = ?", (self.id,)) as cursor:
+				async with connection.execute("SELECT * FROM request WHERE id = ?", (self.id, )) as cursor:
 					async for row in cursor:
 						hit = True
 						count = int(row["count"])

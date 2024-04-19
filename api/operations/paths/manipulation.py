@@ -1,3 +1,4 @@
+from asyncio import to_thread
 from fastapi import APIRouter, Depends
 from api.schemas.image import SimpleImage, CompoundImage
 from api.exceptions.server import BadGatewayException
@@ -15,7 +16,8 @@ async def blend(model: GeneratorModel = Depends(model)):
 	async with SpeedLimit():
 		raise BadGatewayException()
 
-@router.post("/{model_id}/mix", response_model=CompoundImage, responses=responses(*raises_from(model)))
+@router.post("/{model_id}/mix", operation_id="mix", response_model=CompoundImage, responses=responses(*raises_from(model)))
 async def mix(model: GeneratorModel = Depends(model)):
 	async with SpeedLimit():
-		raise OverloadedException()
+		styles, image, label = await to_thread()
+	return CompoundImage()

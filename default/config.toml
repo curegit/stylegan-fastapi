@@ -15,7 +15,7 @@ forwarded = false
 
 [server.http.cors]
 enabled = true
-origins = ["http://localhost:8000", "http://localhost:8080", "http://127.0.0.1:8000/"]
+origins = ["*://localhost:*", "*://127.0.0.1:*/"]
 
 [server.limit]
 min_delay = 1.5

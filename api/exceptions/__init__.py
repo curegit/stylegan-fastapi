@@ -13,7 +13,7 @@ class HTTPException[T: HTTPError](Reified, FastAPIHTTPException):
 
 	@classmethod
 	def get_error_model(cls) -> type[HTTPError]:
-		if issubclass(cls.targ, HTTPError):
+		if isinstance(cls.targ, type) and issubclass(cls.targ, HTTPError):
 			return cls.targ
 		else:
 			return HTTPError

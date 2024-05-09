@@ -11,8 +11,8 @@ class NotFoundException(HTTPException[HTTPNotFoundError]):
 
 class ModelNotFoundException(NotFoundException):
 
-	def __init__(self, name: str, msg: str | None = None) -> None:
-		super().__init__(type="model", name=name, msg=(msg or "no such model"))
+	def __init__(self, id: str, msg: str | None = None) -> None:
+		super().__init__(type="model", name=id, msg=(msg or "no such model"))
 
 
 class LabelNotFoundException(NotFoundException):
@@ -32,6 +32,9 @@ class DeserializationException(HTTPException[DeserializationError]):
 class ArrayValidationException(HTTPException[EntityValidationError]):
 
 	status_code = 422
+
+	def __init__(self, msg: str = "invalid array") -> None:
+		super().__init__(EntityValidationError(detail=msg))
 
 
 class RequestLimitException(HTTPException[RequestLimitError]):

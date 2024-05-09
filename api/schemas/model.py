@@ -2,12 +2,12 @@ from pydantic import BaseModel, Field
 from api.image import png_mime_type
 
 class Model(BaseModel):
-	id: str = Field(min_length=1, example="animal")
-	name: str = Field(example="My Animal Model")
+	id: str = Field(min_length=1, examples=["animal"])
+	name: str = Field(examples=["My Animal Model"])
 	description: str
-	conditional: bool = Field(example=True)
-	labels: list[str] | None = Field(min_items=1, example=["Cat", "Dog", "Unicorn"])
-	width: int = Field(ge=1, example=256)
-	height: int = Field(ge=1, example=256)
-	lossy: bool = Field(example=False)
-	mime_type: str = Field(example=png_mime_type)
+	conditional: bool = Field(examples=[True])
+	labels: list[str] | None = Field(min_length=1, examples=[["Cat", "Dog", "Unicorn"]])
+	width: int = Field(ge=1, examples=[256])
+	height: int = Field(ge=1, examples=[256])
+	lossy: bool = Field(examples=[False])
+	mime_type: str = Field(examples=[png_mime_type])

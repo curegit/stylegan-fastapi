@@ -7,17 +7,18 @@ from api.types import Base64
 def to_npy_base64(array: ndarray) -> Base64:
 	io = BytesIO()
 	np.save(io, array, allow_pickle=False)
-	seq = io.getvalue()
-	string = base64.b64encode(seq).decode("ascii")
+	buf = io.getbuffer()
+	string = base64.b64encode(buf).decode("ascii")
 	return string
 
 def from_npy_base64(npy: Base64) -> ndarray:
 	bs = base64.b64decode(npy)
-	obj = np.load(bs, allow_pickle=False)
-	match obj:
-		case ndarray() as array:
-			return array
-	raise RuntimeError()
+	with BytesIO(bs) as io:
+		obj = np.load(io, allow_pickle=False)
+		match obj:
+			case ndarray() as array:
+				return array
+		raise ValueError()
 
 def validate_array(array: ndarray, shape: tuple[int, ...] | tuple[()] | None = None, dtype: str | type | None = None) -> bool:
 	if shape is not None:

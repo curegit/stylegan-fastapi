@@ -34,5 +34,5 @@ async def concurrency_limit():
 		yield False
 
 @raises(*raises_from(signalling_block, rate_limit, concurrency_limit))
-async def limit(block: bool = Depends(signalling_block), rate: bool = Depends(rate_limit), concurrency: bool = Depends(concurrency_limit)):
+async def limit(block: bool = Depends(signalling_block), rate: bool = Depends(rate_limit), concurrency: bool = Depends(concurrency_limit)) -> bool:
 	return block or rate or concurrency

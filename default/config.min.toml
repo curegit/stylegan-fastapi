@@ -1,0 +1,4 @@
+[models]
+[models.mnist]
+file = "../core/models/mnist.hdf5"
+relative = true

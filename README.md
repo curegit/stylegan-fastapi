@@ -62,61 +62,93 @@ You must specify at least one model.
 
 #### General Settings (root table)
 
-| Key           | Type    | Description                                                                           |
-| ------------- | ------- | ------------------------------------------------------------------------------------- |
-| `title`       | string  | The title of the software.                                                            |
-| `version`     | string  | The version number of the software.                                                   |
-| `description` | string  | A brief description of the software.                                                  |
-| `lossy`       | boolean | A boolean value indicating whether lossy compression is used. The default is `false`. |
-| `docs`        | boolean | A boolean value indicating whether documentation is enabled.                          |
-| `redoc`       | boolean | A boolean value indicating whether ReDoc is enabled.                                  |
+| Key           | Type                             | Description                                                                           |
+| ------------- | -------------------------------- | ------------------------------------------------------------------------------------- |
+| `title`       | string                           | The title of the software.                                                            |
+| `version`     | string                           | The version number of the software.                                                   |
+| `description` | string                           | A brief description of the software.                                                  |
+| `lossy`       | boolean                          | A boolean value indicating whether lossy compression is used. The default is `false`. |
+| `docs`        | boolean                          | A boolean value indicating whether documentation is enabled.                          |
+| `redoc`       | boolean                          | A boolean value indicating whether ReDoc is enabled.                                  |
+| `server`      | [ServerConfig]()                 | dd                                                                                    |
+| `models`      | {[key: string]: [ModelConfig]()} | d                                                                                     |
 
 #### Server Settings
 
-| Key       | Type                                 | Description                                        |
-| --------- | ------------------------------------ | -------------------------------------------------- |
-| `gpu`     | boolean or integer                   | A boolean value indicating whether GPU is enabled. |
-| `logger`  | The name of the logger used.         |
-| `tmp_dir` | The path to the temporary directory. |
+| Key       | Type               | Description                                        |
+| --------- | ------------------ | -------------------------------------------------- |
+| `gpu`     | boolean or integer | A boolean value indicating whether GPU is enabled. |
+| `logger`  | string             | The name of the logger used.                       |
+| `tmp_dir` | string             | The path to the temporary directory.               |
+| `http`    | HTTPConfig         | The path to the temporary directory.               |
+| `limit`   | LimitConfig        | The path to the temporary directory.               |
 
 #### HTTP Settings
 
-| HTTP Settings | Description                                                    |
-| ------------- | -------------------------------------------------------------- |
-| `forwarded`   | A boolean value indicating whether HTTP forwarding is enabled. |
+| HTTP Settings       | Type           | Description                                                    |
+| ------------------- | -------------- | -------------------------------------------------------------- |
+| `forwarded`         | boolean        | A boolean value indicating whether HTTP forwarding is enabled. |
+| `forwarded_headers` | string[]       |                                                                |
+| `cors`              | [CORSConfig]() | A boolean value indicating whether HTTP forwarding is enabled. |
 
 #### CORS Settings
 
-| CORS Settings | Description                                         |
-| ------------- | --------------------------------------------------- |
-| `enabled`     | A boolean value indicating whether CORS is enabled. |
-| `origins`     | A list of allowed origins.                          |
+| `CORSConfig` | Type     | Description                                         |
+| ------------ | -------- | --------------------------------------------------- |
+| `enabled`    | boolean  | A boolean value indicating whether CORS is enabled. |
+| `origins`    | string[] | A list of allowed origins.                          |
 
 ### Limit Settings
 
-| Limit Settings | Description                                |
-| -------------- | ------------------------------------------ |
-| `min_delay`    | The minimum delay time.                    |
-| `block`        | A block of settings for blocking requests. |
-| `concurrency`  | A block of settings for concurrency.       |
-| `rate`         | A block of settings for rate limiting.     |
+| Limit Settings | Type                   | Description                                |
+| -------------- | ---------------------- | ------------------------------------------ |
+| `min_delay`    | float                  | The minimum delay time.                    |
+| `block`        | SignallingBlockConfig  | A block of settings for blocking requests. |
+| `concurrency`  | ConcurrencyLimitConfig | A block of settings for concurrency.       |
+| `rate`         | RateLimitConfig        | A block of settings for rate limiting.     |
 
-## Model Settings
+### SignallingBlockConfig
 
-| Model Settings | Description                                                               |
-| -------------- | ------------------------------------------------------------------------- |
-| `file`         | models: relative path from working directory. The path to the model file. |
-| `relative`     | A boolean value indicating whether the path is relative.                  |
-| `name`         | The name of the model.                                                    |
-| `description`  | A brief description of the model.                                         |
-| `lossy`        | A boolean value indicating whether lossy compression is used.             |
-| `gpu`          | A boolean value indicating whether GPU is enabled.                        |
+| Limit Settings | Type    | Description                            |
+| -------------- | ------- | -------------------------------------- |
+| `enabled`      | boolean | A block of settings for rate limiting. |
+| `timeout`      | float   | A block of settings for rate limiting. |
+| `poll`         | float   | A block of settings for rate limiting. |
 
-## For production (reverse proxy layer)
+### ConcurrencyLimitConfig
 
-- set proxy header correctly
+| Limit Settings    | Type    | Description                            |
+| ----------------- | ------- | -------------------------------------- |
+| `enabled`         | boolean | A block of settings for rate limiting. |
+| `max_concurrency` | int     | A block of settings for rate limiting. |
+| `max_queue`       | int     | A block of settings for rate limiting. |
+| `timeout`         | float   | A block of settings for rate limiting. |
+| `poll`            | float   | A block of settings for rate limiting. |
 
-`RuntimeDirectory`
+### RateLimitConfig
+
+| Limit Settings | Type    | Description                            |
+| -------------- | ------- | -------------------------------------- |
+| `enabled`      | boolean | A block of settings for rate limiting. |
+| `window`       | float   | A block of settings for rate limiting. |
+| `max_request`  | int     | A block of settings for rate limiting. |
+
+### Model Settings
+
+| Model Settings | Type           | Description                                                               |
+| -------------- | -------------- | ------------------------------------------------------------------------- |
+| `file`         | string         | models: relative path from working directory. The path to the model file. |
+| `relative`     | boolean        | A boolean value indicating whether the path is relative.                  |
+| `name`         | string         | The name of the model.                                                    |
+| `description`  | string         | A brief description of the model.                                         |
+| `lossy`        | boolean        | A boolean value indicating whether lossy compression is used.             |
+| `gpu`          | boolean or int | A boolean value indicating whether GPU is enabled.                        |
+
+## Gunicorn
+
+## Example
+
+### `stylegan.service`
 
 ```ini
 [Unit]
@@ -126,10 +158,10 @@ After=network.target
 
 [Service]
 Type=notify
-User=hanon
-Group=hanon
-WorkingDirectory=/home/hanon/stylegan
-ExecStart=/usr/local/bin/python3.11 -B -m gunicorn -c gunicorn.config.py
+User=spam
+Group=spam
+WorkingDirectory=/home/spam/stylegan
+ExecStart=/usr/local/bin/python3.12 -B -m gunicorn -c gunicorn.config.py
 RuntimeDirectory=stylegan
 PrivateTmp=true
 ExecReload=/bin/kill -s HUP $MAINPID
@@ -140,6 +172,8 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+### `stylegan.socket`
 
 ```ini
 [Unit]
@@ -154,10 +188,12 @@ SocketMode=600
 WantedBy=sockets.target
 ```
 
-change
+## Notes
 
-```
-
-```
-
+- set proxy header correctly
+ For production (reverse proxy layer)
 It is also recommeded to set limit header and body size
+
+## License
+
+[CC BY-NC 4.0](LICENSE)

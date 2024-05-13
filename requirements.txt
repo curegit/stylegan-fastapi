@@ -1,7 +1,7 @@
-fastapi
+fastapi >= 0.111
 starlette
 uvicorn[standard]
-pydantic
+pydantic >= 2.7
 aiosqlite
 filelock
 reification

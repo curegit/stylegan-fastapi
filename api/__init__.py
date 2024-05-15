@@ -7,6 +7,10 @@ import sys
 sys.path.insert(0, str(utils.file_rel_path("../core", strict=True)))
 del sys
 
+# Prolong the life of legacy modules
+import cure
+cure.patch()
+
 # Read configuration and define at top level
 config: conf.Config = conf.load_config(env.toml_path)
 

@@ -1,11 +1,11 @@
-from typing import Any
+from typing import TypedDict, Any
 from pydantic import BaseModel
 
 class HTTPError(BaseModel):
 	detail: Any = None
 
 
-class NotFoundError(BaseModel):
+class NotFoundError(TypedDict):
 	type: str
 	name: str
 	msg: str

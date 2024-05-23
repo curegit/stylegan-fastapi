@@ -3,7 +3,7 @@ from fastapi import Path, Query, Body, Depends
 from api import models
 from api.array import from_npy_base64, validate_array, clamp_array
 from api.model import GeneratorModel
-from api.schemas.request import RegenerateRequest, ReconstructionRequest
+from api.schemas.request import GenerateRequestBody, ReconstructionRequestBody
 from api.exceptions import raises, raises_from
 from api.exceptions.client import ModelNotFoundException, LabelNotFoundException, DeserializationException, ArrayValidationException
 
@@ -30,8 +30,8 @@ async def sd(sd: float = Query(1.0, gt=0, le=2)) -> float:
 	return sd
 
 @raises(DeserializationException, ArrayValidationException, *raises_from(model))
-async def optional_latent(req: RegenerateRequest | None = Body(None), model: GeneratorModel = Depends(model)) -> ndarray | None:
-	if req is None:
+async def optional_latent(req: GenerateRequestBody | None = Body(None), model: GeneratorModel = Depends(model)) -> ndarray | None:
+	if req is None or req.latent is None:
 		return None
 	try:
 		arr = from_npy_base64(req.latent)
@@ -42,7 +42,7 @@ async def optional_latent(req: RegenerateRequest | None = Body(None), model: Gen
 	return clamp_array(arr, -100, 100, replace_nan=True)
 
 @raises(DeserializationException, ArrayValidationException, *raises_from(model))
-async def styles(req: ReconstructionRequest = Body(), model: GeneratorModel = Depends(model)) -> list[ndarray]:
+async def styles(req: ReconstructionRequestBody = Body(), model: GeneratorModel = Depends(model)) -> list[ndarray]:
 	res = []
 	for style in req.styles:
 		try:

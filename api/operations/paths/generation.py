@@ -1,7 +1,7 @@
 from asyncio import to_thread
 from numpy import ndarray
 from fastapi import APIRouter, Depends
-from api.schemas import SimpleImage
+from api.schemas import SimplePureImage
 from api.limit import SpeedLimit
 from api.model import GeneratorModel
 from api.exceptions import raises_from, responses
@@ -10,7 +10,7 @@ from api.operations.dependencies import limit
 
 router = APIRouter(tags=["generation"], dependencies=[Depends(limit)], responses=responses(*raises_from(limit)))
 
-@router.post("/{model_id}/generate", operation_id="generate", response_model=SimpleImage, responses=responses(*raises_from(model, optional_label, optional_latent)))
+@router.post("/{model_id}/generate", operation_id="generate", response_model=SimplePureImage, responses=responses(*raises_from(model, optional_label, optional_latent)))
 async def generate(
 	model: GeneratorModel = Depends(model),
 	label: tuple[str, int] | None = Depends(optional_label),
@@ -26,11 +26,11 @@ async def generate(
 			mean=latent,
 			sd=sd,
 		)
-	return SimpleImage(
-		model_id=model.id,
+	return SimplePureImage(
+		model=model.id,
 		width=model.width,
 		height=model.height,
-		mime_type=model.image_type,
+		mimeType=model.image_type,
 		data=image,
 		label=label_str,
 		latent=latent_str,

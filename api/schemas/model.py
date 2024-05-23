@@ -10,4 +10,4 @@ class Model(BaseModel):
 	width: int = Field(ge=1, examples=[256])
 	height: int = Field(ge=1, examples=[256])
 	lossy: bool = Field(examples=[False])
-	mime_type: str = Field(examples=[png_mime_type])
+	mimeType: str = Field(examples=[png_mime_type])

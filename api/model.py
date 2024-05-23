@@ -134,7 +134,7 @@ class GeneratorModel:
 			width=self.width,
 			height=self.height,
 			lossy=self.lossy,
-			mime_type=self.image_type,
+			mimeType=self.image_type,
 		)
 
 	@staticmethod

@@ -3,18 +3,18 @@ from api.image import png_mime_type
 from api.types import Base64, base64_examples
 
 class Image(BaseModel):
-	model_id: str = Field(min_length=1, examples=["animal"])
+	model: str = Field(min_length=1, examples=["animal"])
 	width: int = Field(ge=1, examples=[256])
 	height: int = Field(ge=1, examples=[256])
-	mime_type: str = Field(examples=[png_mime_type])
+	mimeType: str = Field(examples=[png_mime_type])
 	data: Base64 = Field(examples=[next(base64_examples)])
 
 
-class SimpleImage_(Image):
+class SimpleImage(Image):
 	style: Base64 = Field(examples=[next(base64_examples)])
 
 
-class SimpleImage(SimpleImage_):
+class SimplePureImage(SimpleImage):
 	label: str | None = Field(examples=["Cat"])
 	latent: Base64 = Field(examples=[next(base64_examples)])
 

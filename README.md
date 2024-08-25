@@ -60,7 +60,7 @@ complete raw schema definition in Python `api/conf.py`
 All properties are optional except model files
 You must specify at least one model.
 
-#### General Settings (root table)
+#### General Settings (Root table)
 
 | Key           | Type                             | Description                                                                           |
 | ------------- | -------------------------------- | ------------------------------------------------------------------------------------- |
@@ -70,85 +70,85 @@ You must specify at least one model.
 | `lossy`       | boolean                          | A boolean value indicating whether lossy compression is used. The default is `false`. |
 | `docs`        | boolean                          | A boolean value indicating whether documentation is enabled.                          |
 | `redoc`       | boolean                          | A boolean value indicating whether ReDoc is enabled.                                  |
-| `server`      | [ServerConfig]()                 | dd                                                                                    |
-| `models`      | {[key: string]: [ModelConfig]()} | d                                                                                     |
+| `server`      | [ServerConfig](#serverconfig)                     | Server configuration settings.                                                        |
+| `models`      | dict[string, [ModelConfig](#modelconfig)]        | A dictionary of model configurations.                                                 |
 
-#### Server Settings
+#### ServerConfig
 
 | Key       | Type               | Description                                        |
 | --------- | ------------------ | -------------------------------------------------- |
-| `gpu`     | boolean or integer | A boolean value indicating whether GPU is enabled. |
-| `logger`  | string             | The name of the logger used.                       |
+| `gpu`     | boolean or int        | A boolean or integer value indicating whether GPU is enabled. |
+| `logger`  | string     | The name of the logger used.                       |
 | `tmp_dir` | string             | The path to the temporary directory.               |
-| `http`    | HTTPConfig         | The path to the temporary directory.               |
-| `limit`   | LimitConfig        | The path to the temporary directory.               |
+| `http`    | [HTTPConfig](#httpconfig)         | HTTP configuration settings.                       |
+| `limit`   | [LimitConfig](#limitconfig)        | Limit configuration settings.                      |
 
-#### HTTP Settings
+#### HTTPConfig
 
-| HTTP Settings       | Type           | Description                                                    |
-| ------------------- | -------------- | -------------------------------------------------------------- |
-| `forwarded`         | boolean        | A boolean value indicating whether HTTP forwarding is enabled. |
-| `forwarded_headers` | string[]       |                                                                |
-| `cors`              | [CORSConfig]() | A boolean value indicating whether HTTP forwarding is enabled. |
+| Key               | Type           | Description                                                    |
+| ----------------- | -------------- | -------------------------------------------------------------- |
+| `forwarded`       | boolean        | A boolean value indicating whether HTTP forwarding is enabled. |
+| `forwarded_headers` | list[string] | A list of forwarded headers.                                   |
+| `cors`            | [CORSConfig](#corsconfig)     | CORS configuration settings.                                   |
 
-#### CORS Settings
+#### CORSConfig
 
-| `CORSConfig` | Type     | Description                                         |
-| ------------ | -------- | --------------------------------------------------- |
-| `enabled`    | boolean  | A boolean value indicating whether CORS is enabled. |
-| `origins`    | string[] | A list of allowed origins.                          |
+| Key       | Type       | Description                                         |
+| --------- | ---------- | --------------------------------------------------- |
+| `enabled` | boolean    | A boolean value indicating whether CORS is enabled. |
+| `origins` | list[string] | A list of allowed origins.                          |
 
-### Limit Settings
+### LimitConfig
 
-| Limit Settings | Type                   | Description                                |
-| -------------- | ---------------------- | ------------------------------------------ |
-| `min_delay`    | float                  | The minimum delay time.                    |
-| `block`        | SignallingBlockConfig  | A block of settings for blocking requests. |
-| `concurrency`  | ConcurrencyLimitConfig | A block of settings for concurrency.       |
-| `rate`         | RateLimitConfig        | A block of settings for rate limiting.     |
+| Key         | Type                   | Description                                |
+| ----------- | ---------------------- | ------------------------------------------ |
+| `min_delay` | float                  | The minimum response delay time for CPU-bound requests.                    |
+| `block`     | [SignallingBlockConfig](#signallingblockconfig)  | A block of settings for blocking requests. |
+| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for concurrency.       |
+| `rate`      | [RateLimitConfig](#ratelimitconfig)        | A block of settings for rate limiting.     |
 
 ### SignallingBlockConfig
 
-| Limit Settings | Type    | Description                            |
-| -------------- | ------- | -------------------------------------- |
-| `enabled`      | boolean | A block of settings for rate limiting. |
-| `timeout`      | float   | A block of settings for rate limiting. |
-| `poll`         | float   | A block of settings for rate limiting. |
+| Key       | Type    | Description                            |
+| --------- | ------- | -------------------------------------- |
+| `enabled` | boolean | A boolean value indicating whether signalling block is enabled. |
+| `timeout` | float   | The timeout duration for signalling block. |
+| `poll`    | float   | The polling interval for signalling block. |
 
 ### ConcurrencyLimitConfig
 
-| Limit Settings    | Type    | Description                            |
-| ----------------- | ------- | -------------------------------------- |
-| `enabled`         | boolean | A block of settings for rate limiting. |
-| `max_concurrency` | int     | A block of settings for rate limiting. |
-| `max_queue`       | int     | A block of settings for rate limiting. |
-| `timeout`         | float   | A block of settings for rate limiting. |
-| `poll`            | float   | A block of settings for rate limiting. |
+| Key             | Type    | Description                            |
+| --------------- | ------- | -------------------------------------- |
+| `enabled`       | boolean | A boolean value indicating whether concurrency limit is enabled. |
+| `max_concurrency` | int   | The maximum number of concurrent requests. |
+| `max_queue`     | int     | The maximum number of requests in the queue. |
+| `timeout`       | float   | The timeout duration for concurrency limit. |
+| `poll`          | float   | The polling interval for concurrency limit. |
 
 ### RateLimitConfig
 
-| Limit Settings | Type    | Description                            |
-| -------------- | ------- | -------------------------------------- |
-| `enabled`      | boolean | A block of settings for rate limiting. |
-| `window`       | float   | A block of settings for rate limiting. |
-| `max_request`  | int     | A block of settings for rate limiting. |
+| Key          | Type    | Description                            |
+| ------------ | ------- | -------------------------------------- |
+| `enabled`    | boolean | A boolean value indicating whether rate limit is enabled. |
+| `window`     | float   | The time window for rate limiting.     |
+| `max_request` | int    | The maximum number of requests allowed in the time window. |
 
-### Model Settings
+### ModelConfig
 
-| Model Settings | Type           | Description                                                               |
-| -------------- | -------------- | ------------------------------------------------------------------------- |
-| `file`         | string         | models: relative path from working directory. The path to the model file. |
-| `relative`     | boolean        | A boolean value indicating whether the path is relative.                  |
-| `name`         | string         | The name of the model.                                                    |
-| `description`  | string         | A brief description of the model.                                         |
-| `lossy`        | boolean        | A boolean value indicating whether lossy compression is used.             |
-| `gpu`          | boolean or int | A boolean value indicating whether GPU is enabled.                        |
+| Key          | Type           | Description                                                               |
+| ------------ | -------------- | ------------------------------------------------------------------------- |
+| `file`       | string         | The path to the model file.                                               |
+| `relative`   | boolean        | A boolean value indicating whether the path is relative.                  |
+| `name`       | string         | The name of the model.                                                    |
+| `description` | string        | A brief description of the model.                                         |
+| `lossy`      | boolean        | A boolean value indicating whether lossy compression is used.             |
+| `gpu`        | boolean or int    | A boolean or integer value indicating whether GPU is enabled.             |
 
 ## Gunicorn
 
-## Example
+### Example
 
-### `stylegan.service`
+#### `stylegan.service`
 
 ```ini
 [Unit]
@@ -173,7 +173,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-### `stylegan.socket`
+#### `stylegan.socket`
 
 ```ini
 [Unit]
@@ -190,9 +190,8 @@ WantedBy=sockets.target
 
 ## Notes
 
-- set proxy header correctly
- For production (reverse proxy layer)
-It is also recommeded to set limit header and body size
+- Ensure that proxy headers are correctly set if used (e.g., Forwarded, X-Forwarded-For) for production environments with a reverse proxy layer.
+- It is also recommended to set limits on header and body size.
 
 ## License
 

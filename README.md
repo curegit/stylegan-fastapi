@@ -2,43 +2,41 @@
 
 Simplified Web REST API of the StyleGAN using FastAPI
 
-This is a web backend application to make the generator models trained by [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada) available on the web in a simplified manner.
-An example implementation of the front-end client is [StyleGAN Vue](https://github.com/curegit/stylegan-vue) and is [deployed here]() for immediate trial.
+This is a web backend application to make the generator models trained by [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada) available on the web in a simplified way.
+[StyleGAN Vue](https://github.com/curegit/stylegan-vue) is a sample implementation of its frontend client and is [deployed here](#) connected to [a demo backend with some models](#) for immediate trial.
 
-## Requirements
+## API Specifications
+
+Refer to the Swagger or ReDoc documentation on the sample backend or on your deployed instance at the paths `/docs` or `/redoc`.
+
+## Application Requirements
 
 To run this application, you need a Unix-like system with Python >= 3.12 installed.
-[Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada)'s dependencies.
 
-Use the `requirements.txt` to install minimal dependencies for serving and inferencing.
+Use the `requirements.txt` to install the minimal dependencies for serving and inferencing, including the dependencies of [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada).
 
 ```sh
 pip3 install -r requirements.txt
 ```
 
-While Uvicorn is recommended as ASGI middleware, other alternatives such as Hypercorn also work.
+While Uvicorn is the recommended as ASGI middleware, other alternatives such as Hypercorn may also work.
+However, in a production environment, it is common to use process replication with a combination of Gunicorn and Uvicorn.
 
-In a product environment, a typical example is process replication using a combination of Gunicorn and Uvicorn.
+## Quick Start: Running the default server
 
-## Quick Start: Run the Default Server
-
-This repository includes the default server configuration using Uvicorn with some trained models.
-You can try out quickly as below.
+This repository contains the default server configuration using Uvicorn with some trained models.
+You can quickly try it out as follows:
 
 ```sh
 git clone --recursive https://github.com/curegit/stylegan-fastapi.git
 cd stylegan-fastapi
 pip3 install -r requirements.txt
-uvicorn main:app --reload
+uvicorn main:app
 ```
 
-Note that it is only for trial or debugging, and not suitable for production because it is not process-replication-enabled.
+Please note that this setup is intended for trial or debugging purposes only and is not suitable for production use as it does not support process replication.
 
-## API
-
-See the
-
-## Configuration
+## Application Configuration
 
 StyleGAN FastAPI can be customized by using a configuration file.
 StyleGAN FastAPI uses the TOML format for configuration, and the default TOML file is located in `default/config.toml`.
@@ -52,96 +50,96 @@ export STYLEGAN_TOML="./custom_config.toml"
 uvicorn main:app
 ```
 
-### Configuration TOML Specification
+### Configuration TOML Specifications
 
-standard TOML
-complete raw schema definition in Python `api/conf.py`
+The configuration file follows the standard TOML format.
+A complete raw schema definition can be found in the Python file `api/conf.py`.
 
-All properties are optional except `file` field in `ModelConfig` to specify model files, and you must specify at least one model.
+All properties are optional except the `file` field in `ModelConfig` to specify model files, and you must specify at least one model.
 
 #### General Settings (Root table)
 
-| Key           | Type                             | Description                                                                           |
-| ------------- | -------------------------------- | ------------------------------------------------------------------------------------- |
-| `title`       | string                           | The title of the software.                                                            |
-| `version`     | string                           | The version number of the software.                                                   |
-| `description` | string                           | A brief description of the software.                                                  |
-| `lossy`       | boolean                          | A boolean value indicating whether lossy compression is used. The default is `false`. |
-| `docs`        | boolean                          | A boolean value indicating whether documentation is enabled.                          |
-| `redoc`       | boolean                          | A boolean value indicating whether ReDoc is enabled.                                  |
-| `server`      | [ServerConfig](#serverconfig)                     | Server configuration settings.                                                        |
-| `models`      | {string: [ModelConfig](#modelconfig)}        | A dictionary of model configurations.                                                 |
+| Key           | Type                                  | Description                                                                           |
+| ------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `title`       | string                                | The title of the software.                                                            |
+| `version`     | string                                | The version number of the software.                                                   |
+| `description` | string                                | A brief description of the software.                                                  |
+| `lossy`       | boolean                               | A boolean value indicating whether lossy compression is used. The default is `false`. |
+| `docs`        | boolean                               | A boolean value indicating whether documentation is enabled.                          |
+| `redoc`       | boolean                               | A boolean value indicating whether ReDoc is enabled.                                  |
+| `server`      | [ServerConfig](#serverconfig)         | Server configuration settings.                                                        |
+| `models`      | {string: [ModelConfig](#modelconfig)} | A dictionary of model configurations.                                                 |
 
 #### ServerConfig
 
-| Key       | Type               | Description                                        |
-| --------- | ------------------ | -------------------------------------------------- |
-| `gpu`     | boolean or int        | A boolean or integer value indicating whether GPU is enabled. |
-| `logger`  | string     | The name of the logger used.                       |
-| `tmp_dir` | string             | The path to the temporary directory.               |
-| `http`    | [HTTPConfig](#httpconfig)         | HTTP configuration settings.                       |
-| `limit`   | [LimitConfig](#limitconfig)        | Limit configuration settings.                      |
+| Key       | Type                        | Description                                                   |
+| --------- | --------------------------- | ------------------------------------------------------------- |
+| `gpu`     | boolean or int              | A boolean or integer value indicating whether GPU is enabled. |
+| `logger`  | string                      | The name of the logger used.                                  |
+| `tmp_dir` | string                      | The path to the temporary directory.                          |
+| `http`    | [HTTPConfig](#httpconfig)   | HTTP configuration settings.                                  |
+| `limit`   | [LimitConfig](#limitconfig) | Limit configuration settings.                                 |
 
 #### HTTPConfig
 
-| Key               | Type           | Description                                                    |
-| ----------------- | -------------- | -------------------------------------------------------------- |
-| `forwarded`       | boolean        | A boolean value indicating whether HTTP forwarding is enabled. |
-| `forwarded_headers` | [string] | A list of forwarded headers.                                   |
-| `cors`            | [CORSConfig](#corsconfig)     | CORS configuration settings.                                   |
+| Key                 | Type                      | Description                                                    |
+| ------------------- | ------------------------- | -------------------------------------------------------------- |
+| `forwarded`         | boolean                   | A boolean value indicating whether HTTP forwarding is enabled. |
+| `forwarded_headers` | [string]                  | A list of forwarded headers.                                   |
+| `cors`              | [CORSConfig](#corsconfig) | CORS configuration settings.                                   |
 
 #### CORSConfig
 
-| Key       | Type       | Description                                         |
-| --------- | ---------- | --------------------------------------------------- |
-| `enabled` | boolean    | A boolean value indicating whether CORS is enabled. |
+| Key       | Type     | Description                                         |
+| --------- | -------- | --------------------------------------------------- |
+| `enabled` | boolean  | A boolean value indicating whether CORS is enabled. |
 | `origins` | [string] | A list of allowed origins.                          |
 
 #### LimitConfig
 
-| Key         | Type                   | Description                                |
-| ----------- | ---------------------- | ------------------------------------------ |
-| `min_delay` | float                  | The minimum response delay time for CPU-bound requests.                    |
-| `block`     | [SignallingBlockConfig](#signallingblockconfig)  | A block of settings for blocking requests. |
-| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for concurrency.       |
-| `rate`      | [RateLimitConfig](#ratelimitconfig)        | A block of settings for rate limiting.     |
+| Key           | Type                                              | Description                                             |
+| ------------- | ------------------------------------------------- | ------------------------------------------------------- |
+| `min_delay`   | float                                             | The minimum response delay time for CPU-bound requests. |
+| `block`       | [SignallingBlockConfig](#signallingblockconfig)   | A block of settings for blocking requests.              |
+| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for concurrency.                    |
+| `rate`        | [RateLimitConfig](#ratelimitconfig)               | A block of settings for rate limiting.                  |
 
 #### SignallingBlockConfig
 
-| Key       | Type    | Description                            |
-| --------- | ------- | -------------------------------------- |
+| Key       | Type    | Description                                                     |
+| --------- | ------- | --------------------------------------------------------------- |
 | `enabled` | boolean | A boolean value indicating whether signalling block is enabled. |
-| `timeout` | float   | The timeout duration for signalling block. |
-| `poll`    | float   | The polling interval for signalling block. |
+| `timeout` | float   | The timeout duration for signalling block.                      |
+| `poll`    | float   | The polling interval for signalling block.                      |
 
 #### ConcurrencyLimitConfig
 
-| Key             | Type    | Description                            |
-| --------------- | ------- | -------------------------------------- |
-| `enabled`       | boolean | A boolean value indicating whether concurrency limit is enabled. |
-| `max_concurrency` | int   | The maximum number of concurrent requests. |
-| `max_queue`     | int     | The maximum number of requests in the queue. |
-| `timeout`       | float   | The timeout duration for concurrency limit. |
-| `poll`          | float   | The polling interval for concurrency limit. |
+| Key               | Type    | Description                                                      |
+| ----------------- | ------- | ---------------------------------------------------------------- |
+| `enabled`         | boolean | A boolean value indicating whether concurrency limit is enabled. |
+| `max_concurrency` | int     | The maximum number of concurrent requests.                       |
+| `max_queue`       | int     | The maximum number of requests in the queue.                     |
+| `timeout`         | float   | The timeout duration for concurrency limit.                      |
+| `poll`            | float   | The polling interval for concurrency limit.                      |
 
 #### RateLimitConfig
 
-| Key          | Type    | Description                            |
-| ------------ | ------- | -------------------------------------- |
-| `enabled`    | boolean | A boolean value indicating whether rate limit is enabled. |
-| `window`     | float   | The time window for rate limiting.     |
-| `max_request` | int    | The maximum number of requests allowed in the time window. |
+| Key           | Type    | Description                                                |
+| ------------- | ------- | ---------------------------------------------------------- |
+| `enabled`     | boolean | A boolean value indicating whether rate limit is enabled.  |
+| `window`      | float   | The time window for rate limiting.                         |
+| `max_request` | int     | The maximum number of requests allowed in the time window. |
 
 #### ModelConfig
 
-| Key          | Type           | Description                                                               |
-| ------------ | -------------- | ------------------------------------------------------------------------- |
-| `file`       | string         | The path to the model file.                                               |
-| `relative`   | boolean        | A boolean value indicating whether the path is relative.                  |
-| `name`       | string         | The name of the model.                                                    |
-| `description` | string        | A brief description of the model.                                         |
-| `lossy`      | boolean        | A boolean value indicating whether lossy compression is used.             |
-| `gpu`        | boolean or int    | A boolean or integer value indicating whether GPU is enabled.             |
+| Key           | Type           | Description                                                   |
+| ------------- | -------------- | ------------------------------------------------------------- |
+| `file`        | string         | The path to the model file.                                   |
+| `relative`    | boolean        | A boolean value indicating whether the path is relative.      |
+| `name`        | string         | The name of the model.                                        |
+| `description` | string         | A brief description of the model.                             |
+| `lossy`       | boolean        | A boolean value indicating whether lossy compression is used. |
+| `gpu`         | boolean or int | A boolean or integer value indicating whether GPU is enabled. |
 
 ## Gunicorn
 

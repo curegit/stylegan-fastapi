@@ -59,16 +59,16 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 #### General Settings (Root table)
 
-| Key           | Type                                  | Description                                                                           |
-| ------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
-| `title`       | string                                | The title of the software.                                                            |
-| `version`     | string                                | The version number of the software.                                                   |
-| `description` | string                                | A brief description of the software.                                                  |
-| `lossy`       | boolean                               | A boolean value indicating whether lossy compression is used. The default is `false`. |
-| `docs`        | boolean                               | A boolean value indicating whether documentation is enabled.                          |
-| `redoc`       | boolean                               | A boolean value indicating whether ReDoc is enabled.                                  |
-| `server`      | [ServerConfig](#serverconfig)         | Server configuration settings.                                                        |
-| `models`      | {string: [ModelConfig](#modelconfig)} | A dictionary of model configurations.                                                 |
+| Key           | Type                                    | Description                                                                           |
+| ------------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
+| `title`       | string                                  | The title of the software.                                                            |
+| `version`     | string                                  | The version number of the software.                                                   |
+| `description` | string                                  | A brief description of the software.                                                  |
+| `lossy`       | boolean                                 | A boolean value indicating whether lossy compression is used. The default is `false`. |
+| `docs`        | boolean                                 | A boolean value indicating whether documentation is enabled.                          |
+| `redoc`       | boolean                                 | A boolean value indicating whether ReDoc is enabled.                                  |
+| `server`      | [ServerConfig](#serverconfig)           | Server configuration settings.                                                        |
+| `models`      | { string: [ModelConfig](#modelconfig) } | A dictionary of model configurations.                                                 |
 
 #### ServerConfig
 
@@ -187,8 +187,8 @@ WantedBy=sockets.target
 
 ## Notes
 
-- Ensure that proxy headers are correctly set if used (e.g., Forwarded, X-Forwarded-For) for production environments with a reverse proxy layer.
-- It is also recommended to set limits on header and body size.
+- Ensure that proxy headers, if used, are set correctly (e.g., Forwarded, X-Forwarded-For) for production environments with a reverse proxy layer.
+- It is also recommended to set header and body size limits via Gunicorn or a reverse proxy.
 
 ## License
 

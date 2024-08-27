@@ -1,4 +1,4 @@
-fastapi >= 0.111
+fastapi >= 0.112
 starlette
 uvicorn[standard]
 pydantic >= 2.7

@@ -5,5 +5,5 @@
 *.sqlite3
 *.lock
 __pycache__/
+/*venv*/
 run/
-/venv/

@@ -31,7 +31,7 @@ You can quickly try it out as follows:
 git clone --recursive https://github.com/curegit/stylegan-fastapi.git
 cd stylegan-fastapi
 pip3 install -r requirements.txt
-uvicorn main:app
+python3 -m uvicorn main:app
 ```
 
 Please note that this setup is intended for trial or debugging purposes only and is not suitable for production use as it does not support process replication.

@@ -43,9 +43,9 @@ See the
 StyleGAN FastAPI can be customized by using a configuration file.
 StyleGAN FastAPI uses the TOML format for configuration, and the default TOML file is located in `default/config.toml`.
 
-You can specify a different TOML file to use by setting the `STYLEGAN_TOML` environment variable.
-`STYLEGAN_TOML` must be an absolute path or a relative path from the working directory to the TOML file.
-Note that the `STYLEGAN_TOML` environment variable must be set before importing the `api` Python package.
+You can specify a different configuration TOML file to use by setting the `STYLEGAN_TOML` environment variable.
+`STYLEGAN_TOML` must be an absolute path or a relative path to the TOML file from the working directory.
+Note that the `STYLEGAN_TOML` environment variable must be set before importing the `api/` Python package.
 
 ```sh
 export STYLEGAN_TOML="./custom_config.toml"
@@ -57,8 +57,7 @@ uvicorn main:app
 standard TOML
 complete raw schema definition in Python `api/conf.py`
 
-All properties are optional except model files
-You must specify at least one model.
+All properties are optional except `file` field in `ModelConfig` to specify model files, and you must specify at least one model.
 
 #### General Settings (Root table)
 
@@ -71,7 +70,7 @@ You must specify at least one model.
 | `docs`        | boolean                          | A boolean value indicating whether documentation is enabled.                          |
 | `redoc`       | boolean                          | A boolean value indicating whether ReDoc is enabled.                                  |
 | `server`      | [ServerConfig](#serverconfig)                     | Server configuration settings.                                                        |
-| `models`      | dict[string, [ModelConfig](#modelconfig)]        | A dictionary of model configurations.                                                 |
+| `models`      | {string: [ModelConfig](#modelconfig)}        | A dictionary of model configurations.                                                 |
 
 #### ServerConfig
 
@@ -88,7 +87,7 @@ You must specify at least one model.
 | Key               | Type           | Description                                                    |
 | ----------------- | -------------- | -------------------------------------------------------------- |
 | `forwarded`       | boolean        | A boolean value indicating whether HTTP forwarding is enabled. |
-| `forwarded_headers` | list[string] | A list of forwarded headers.                                   |
+| `forwarded_headers` | [string] | A list of forwarded headers.                                   |
 | `cors`            | [CORSConfig](#corsconfig)     | CORS configuration settings.                                   |
 
 #### CORSConfig
@@ -96,9 +95,9 @@ You must specify at least one model.
 | Key       | Type       | Description                                         |
 | --------- | ---------- | --------------------------------------------------- |
 | `enabled` | boolean    | A boolean value indicating whether CORS is enabled. |
-| `origins` | list[string] | A list of allowed origins.                          |
+| `origins` | [string] | A list of allowed origins.                          |
 
-### LimitConfig
+#### LimitConfig
 
 | Key         | Type                   | Description                                |
 | ----------- | ---------------------- | ------------------------------------------ |
@@ -107,7 +106,7 @@ You must specify at least one model.
 | `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for concurrency.       |
 | `rate`      | [RateLimitConfig](#ratelimitconfig)        | A block of settings for rate limiting.     |
 
-### SignallingBlockConfig
+#### SignallingBlockConfig
 
 | Key       | Type    | Description                            |
 | --------- | ------- | -------------------------------------- |
@@ -115,7 +114,7 @@ You must specify at least one model.
 | `timeout` | float   | The timeout duration for signalling block. |
 | `poll`    | float   | The polling interval for signalling block. |
 
-### ConcurrencyLimitConfig
+#### ConcurrencyLimitConfig
 
 | Key             | Type    | Description                            |
 | --------------- | ------- | -------------------------------------- |
@@ -125,7 +124,7 @@ You must specify at least one model.
 | `timeout`       | float   | The timeout duration for concurrency limit. |
 | `poll`          | float   | The polling interval for concurrency limit. |
 
-### RateLimitConfig
+#### RateLimitConfig
 
 | Key          | Type    | Description                            |
 | ------------ | ------- | -------------------------------------- |
@@ -133,7 +132,7 @@ You must specify at least one model.
 | `window`     | float   | The time window for rate limiting.     |
 | `max_request` | int    | The maximum number of requests allowed in the time window. |
 
-### ModelConfig
+#### ModelConfig
 
 | Key          | Type           | Description                                                               |
 | ------------ | -------------- | ------------------------------------------------------------------------- |

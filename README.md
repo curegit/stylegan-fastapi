@@ -143,6 +143,14 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 ## Gunicorn
 
+```py
+from guni.conf import *
+
+wsgi_app = "main:app"
+workers = 3
+raw_env = ["STYLEGAN_TOML=myconfig.toml"]
+```
+
 ### Example
 
 #### `stylegan.service`

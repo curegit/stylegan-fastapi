@@ -143,6 +143,8 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 ## Gunicorn
 
+`logger = "gunicorn.error"`
+
 ### Example
 
 #### `stylegan.service`

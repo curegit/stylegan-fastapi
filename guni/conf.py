@@ -1,10 +1,10 @@
-import os
-import uvicorn_worker
+import os as _os
+import uvicorn_worker as _uvicorn_worker
 
 daemon = False
 preload_app = True
-workers = os.cpu_count() + 1
-worker_class = uvicorn_worker.UvicornWorker
+workers = _os.cpu_count() + 1
+worker_class = _uvicorn_worker.UvicornWorker
 
 max_requests = 1024
 max_requests_jitter = 128

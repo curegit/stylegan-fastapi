@@ -4,6 +4,7 @@
 *.socket
 *.sqlite3
 *.lock
+.mypy_cache/
 __pycache__/
 /*venv*/
 run/

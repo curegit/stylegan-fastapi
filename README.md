@@ -61,22 +61,22 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 | Key           | Type                                    | Description                                                                           |
 | ------------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
-| `title`       | string                                  | The title of the software.                                                            |
-| `version`     | string                                  | The version number of the software.                                                   |
-| `description` | string                                  | A brief description of the software.                                                  |
-| `lossy`       | boolean                                 | A boolean value indicating whether lossy compression is used. The default is `false`. |
-| `docs`        | boolean                                 | A boolean value indicating whether documentation is enabled.                          |
-| `redoc`       | boolean                                 | A boolean value indicating whether ReDoc is enabled.                                  |
-| `server`      | [ServerConfig](#serverconfig)           | Server configuration settings.                                                        |
-| `models`      | { string: [ModelConfig](#modelconfig) } | A dictionary of model configurations.                                                 |
+| `title`       | string                                  | The title of the API Service. Used in OpenAPI spec.                                                           |
+| `version`     | string                                  | The version number of the API. Used in OpenAPI spec.                                                  |
+| `description` | string                                  | A brief description of the API Service. Used in OpenAPI spec.                                                 |
+| `docs`        | boolean                                 | Whether the Swagger page is enabled. The default is `true`.                         |
+| `redoc`       | boolean                                 | Whether the ReDoc page is enabled. The default is `true`.                                 |
+| `lossy`       | boolean                                 | Whether lossy compression is used for outputs. The default is `false`. |
+| `server`      | [ServerConfig](#serverconfig)           | Server internal configuration settings.                                                        |
+| `models`      | { string: [ModelConfig](#modelconfig) } | A dictionary of model configurations to use.                                                 |
 
 #### ServerConfig
 
 | Key       | Type                        | Description                                                   |
 | --------- | --------------------------- | ------------------------------------------------------------- |
-| `gpu`     | boolean or int              | A boolean or integer value indicating whether GPU is enabled. |
-| `logger`  | string                      | The name of the logger used.                                  |
-| `tmp_dir` | string                      | The path to the temporary directory.                          |
+| `gpu`     | boolean or int              | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is used. |
+| `logger`  | string                      | The name of the parent logger that this application's logger derives from.                                  |
+| `tmp_dir` | string                      | The path to the temporary directory to locate runtime files. Volatile locations like `tmpfs` allowed.                         |
 | `http`    | [HTTPConfig](#httpconfig)   | HTTP configuration settings.                                  |
 | `limit`   | [LimitConfig](#limitconfig) | Limit configuration settings.                                 |
 
@@ -84,16 +84,16 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 | Key                 | Type                      | Description                                                    |
 | ------------------- | ------------------------- | -------------------------------------------------------------- |
-| `forwarded`         | boolean                   | A boolean value indicating whether HTTP forwarding is enabled. |
-| `forwarded_headers` | [string]                  | A list of forwarded headers.                                   |
+| `forwarded`         | boolean                   | Indicating whether reverse proxy servers are involved in the path of the requests.  |
+| `forwarded_headers` | [string]                  | A list of headers to check original client address like "Forwarded" or "X-Forwarded-For", that can be multiple and is left precedence. This is used for identifying clients when `forwarded` is true. Regardless of the header type, The entire string equivalence of the header value is used to identify clients.                                |
 | `cors`              | [CORSConfig](#corsconfig) | CORS configuration settings.                                   |
 
 #### CORSConfig
 
 | Key       | Type     | Description                                         |
 | --------- | -------- | --------------------------------------------------- |
-| `enabled` | boolean  | A boolean value indicating whether CORS is enabled. |
-| `origins` | [string] | A list of allowed origins.                          |
+| `enabled` | boolean  | A boolean value indicating whether CORS configuration is enabled. |
+| `origins` | [string] | A list of allowed origins. Set ["*"] for wildcard.                        |
 
 #### LimitConfig
 
@@ -173,6 +173,7 @@ RuntimeDirectory=stylegan
 PrivateTmp=true
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
+TimeoutStartSec=240
 TimeoutStopSec=30
 Restart=always
 

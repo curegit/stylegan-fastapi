@@ -8,6 +8,7 @@ def get_client_id(request: Request) -> str:
 		for name in config.server.http.forwarded_headers:
 			match request.headers.get(name):
 				case str() as value if value:
+					logger.debug(f"{name}: {value}")
 					return hash_client(value)
 		logger.warning("Encountered a client whose IP address is not set in the header as expected")
 		raise BadGatewayException("client IP address is not set in the header as expected")

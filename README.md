@@ -57,7 +57,7 @@ A complete raw schema definition can be found in the Python file `api/conf.py`.
 
 All properties are optional except the `file` field in `ModelConfig` to specify model files, and you must specify at least one model.
 
-#### General Settings (Root table)
+#### General Settings (Root)
 
 | Key           | Type                                    | Description                                                                           |
 | ------------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -86,7 +86,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | ------------------- | ------------------------- | -------------------------------------------------------------- |
 | `forwarded`         | boolean                   | Indicates whether reverse proxy servers are involved in the path of the requests. The default is `false`. You can leave this `false` if your middleware such as Uvicorn is configured to fill in real remote address info.  |
 | `forwarded_headers` | [string]                  | A list of headers to check for the original client address, such as "Forwarded" or "X-Forwarded-For", which can be multiple and is left in order. This is used for identifying clients when `forwarded` is true. Regardless of the header type, the entire string equivalence of the header value is used to identify clients.                                |
-| `cors`              | [CORSConfig](#corsconfig) | CORS configuration settings.                                   |
+| `cors`              | [CORSConfig](#corsconfig) | Cross-Origin Resource Sharing (CORS) configuration settings.                                   |
 
 #### CORSConfig
 
@@ -100,8 +100,8 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | Key           | Type                                              | Description                                             |
 | ------------- | ------------------------------------------------- | ------------------------------------------------------- |
 | `min_delay`   | float                                             | The minimum response delay time for CPU-bound requests. |
-| `block`       | [SignallingBlockConfig](#signallingblockconfig)   | A block of settings for blocking requests.              |
-| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for concurrency.                    |
+| `block`       | [SignallingBlockConfig](#signallingblockconfig)   | A block of settings for the signalling block.              |
+| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for the concurrency limit.                    |
 | `rate`        | [RateLimitConfig](#ratelimitconfig)               | A block of settings for rate limiting.                  |
 
 #### SignallingBlockConfig
@@ -136,10 +136,10 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | ------------- | -------------- | ------------------------------------------------------------- |
 | `file`        | string         | The path to the model file.                                   |
 | `relative`    | boolean        | A boolean value indicating whether the path is relative.      |
-| `name`        | string         | The name of the model.                                        |
+| `name`        | string         | The display name of the model.                                        |
 | `description` | string         | A brief description of the model.                             |
-| `lossy`       | boolean        | A boolean value indicating whether lossy compression is used. |
-| `gpu`         | boolean or int | A boolean or integer value indicating whether GPU is enabled. |
+| `lossy`       | boolean        | Whether lossy compression is used. This overrides [General Settings](#general-settings-root)'s `lossy`. |
+| `gpu`         | boolean or int | Whether GPU is enabled. This overrides [ServerConfig](#serverconfig)'s `gpu`. |
 
 ## Gunicorn
 

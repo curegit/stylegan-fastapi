@@ -93,7 +93,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | Key       | Type     | Description                                         |
 | --------- | -------- | --------------------------------------------------- |
 | `enabled` | boolean  | A boolean value indicating whether CORS configuration is enabled. The default is `false`. |
-| `origins` | [string] | A list of allowed origins. Set ["*"] for wildcard.                        |
+| `origins` | [string] | A list of allowed origins. Set `["*"]` for wildcard.                        |
 
 #### LimitConfig
 
@@ -138,8 +138,8 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | `relative`    | boolean        | A boolean value indicating whether the path is relative.      |
 | `name`        | string         | The display name of the model.                                        |
 | `description` | string         | A brief description of the model.                             |
-| `lossy`       | boolean        | Whether lossy compression is used. This overrides [General Settings](#general-settings-root)'s `lossy`. |
-| `gpu`         | boolean or int | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides [ServerConfig](#serverconfig)'s `gpu`. |
+| `lossy`       | boolean        | Whether lossy compression is used. This overrides the `lossy` in the [General Settings](#general-settings-root). |
+| `gpu`         | boolean or int | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides the [ServerConfig](#serverconfig) `gpu`. |
 
 ## Gunicorn
 

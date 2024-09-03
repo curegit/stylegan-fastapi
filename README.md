@@ -139,7 +139,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | `name`        | string         | The display name of the model.                                        |
 | `description` | string         | A brief description of the model.                             |
 | `lossy`       | boolean        | Whether lossy compression is used. This overrides [General Settings](#general-settings-root)'s `lossy`. |
-| `gpu`         | boolean or int | Whether GPU is enabled. This overrides [ServerConfig](#serverconfig)'s `gpu`. |
+| `gpu`         | boolean or int | Whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides [ServerConfig](#serverconfig)'s `gpu`. |
 
 ## Gunicorn
 

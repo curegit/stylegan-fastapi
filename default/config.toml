@@ -12,6 +12,7 @@ tmp_dir = "./run"
 
 [server.http]
 forwarded = false
+forwarded_headers = ["X-Forwarded-For", "Forwarded"]
 
 [server.http.cors]
 enabled = true

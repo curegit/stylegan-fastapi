@@ -157,19 +157,27 @@ raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 
 #### `stylegan.service`
 
+`tmp_dir = "/run/stylegan"`
+
 ```ini
 [Unit]
 Description=Gunicorn StyleGAN Daemon
 Requires=stylegan.socket
 After=network.target
+After=syslog.target
 
 [Service]
 Type=notify
 User=spam
 Group=spam
 WorkingDirectory=/home/spam/stylegan
-ExecStart=/usr/local/bin/python3.12 -B -m gunicorn -c gunicorn.config.py
+ExecStart=/usr/local/bin/python3.12 -B -m gunicorn -c gunicorn.conf.py \
+                                                   --log-level info \
+                                                   --log-file /var/log/stylegan/system.log \
+                                                   --access-logfile /var/log/stylegan/access.log \
+                                                   --capture-output
 RuntimeDirectory=stylegan
+LogsDirectory=stylegan
 PrivateTmp=true
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
@@ -194,6 +202,21 @@ SocketMode=600
 
 [Install]
 WantedBy=sockets.target
+```
+
+logrotate.d/stylegan
+
+```txt
+/var/log/stylegan/*.log {
+  monthly
+  dateformat -%Y-%m-%d
+  rotate 12
+  compress
+  ifempty
+  missingok
+  copytruncate
+  maxsize 100M
+}
 ```
 
 ## Notes

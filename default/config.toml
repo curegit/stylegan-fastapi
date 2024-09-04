@@ -1,6 +1,6 @@
 title = "StyleGAN API"
 version = "1.0.0"
-description = "Simplified Web REST API of the StyleGANs"
+description = "Simplified Web REST API of the StyleGAN"
 lossy = false
 docs = true
 redoc = true
@@ -14,11 +14,11 @@ tmp_dir = "./run"
 forwarded = false
 
 [server.http.cors]
-enabled = true
-origins = ["*://localhost:*", "*://127.0.0.1:*/"]
+enabled = false
+origins = ["*"]
 
 [server.limit]
-min_delay = 1.5
+min_delay = 0.0
 
 [server.limit.block]
 enabled = true

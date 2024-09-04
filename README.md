@@ -39,7 +39,7 @@ Please note that this setup is intended for trial or debugging purposes only and
 ## Application Configuration
 
 StyleGAN FastAPI can be customized by using a configuration file.
-StyleGAN FastAPI uses the TOML format for configuration, and the default TOML file is located in `default/config.toml`.
+StyleGAN FastAPI uses the TOML format for configuration, and the default server's TOML file is located in `default/config.toml`.
 
 You can specify a different configuration TOML file to use by setting the `STYLEGAN_TOML` environment variable.
 `STYLEGAN_TOML` must be an absolute path or a relative path to the TOML file from the working directory.
@@ -53,7 +53,7 @@ uvicorn main:app
 ### Configuration TOML Specifications
 
 The configuration file follows the standard TOML format.
-A complete raw schema definition can be found in the Python file `api/conf.py`.
+A complete raw schema definition and default values can be found in the Python file `api/conf.py`.
 
 All properties are optional except the `file` field in `ModelConfig` to specify model files, and you must specify at least one model.
 
@@ -135,7 +135,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | Key           | Type           | Description                                                   |
 | ------------- | -------------- | ------------------------------------------------------------- |
 | `file`        | string         | The path to the model file.                                   |
-| `relative`    | boolean        | A boolean value indicating whether the path is relative.      |
+| `relative`    | boolean        | Whether the model file path is relative to this TOML file instead of the working directory. The default is `false`.     |
 | `name`        | string         | The display name of the model.                                        |
 | `description` | string         | A brief description of the model.                             |
 | `lossy`       | boolean        | Whether lossy compression is used. This overrides the `lossy` in the [General Settings](#general-settings-root). |

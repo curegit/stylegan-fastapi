@@ -10,14 +10,20 @@ del sys
 # Prolong the life of legacy modules
 import cure
 cure.patch()
+del cure
 
 # Read configuration and define at top level
 config: conf.Config = conf.load_config(env.toml_path)
 
 # Create a logger
+import sys
 import logging
-logger: logging.Logger = logging.getLogger(__name__ if config.server.logger is None else config.server.logger)
+logger: logging.Logger = logging.getLogger(__name__) if config.server.logger is None else logging.getLogger(config.server.logger).getChild(__name__)
+if config.server.logger is None:
+    logger.addHandler(logging.StreamHandler(sys.stderr))
+    logger.setLevel(logging.INFO)
 del logging
+del sys
 
 # Create the runtime directory
 utils.mkdirp(config.server.tmp_dir)

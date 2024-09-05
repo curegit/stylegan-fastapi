@@ -33,7 +33,7 @@ models: dict[str, model.GeneratorModel] = {
 	key: model.GeneratorModel.load(
 		filepath=utils.resolve_path(env.toml_path.parent.joinpath(val.file) if val.relative else val.file),
 		id=key,
-		name=val.name,
+		name=(val.name or key),
 		description=val.description,
 		gpu=val.gpu,
 		lossy=val.lossy,

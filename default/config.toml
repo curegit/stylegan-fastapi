@@ -1,9 +1,9 @@
 title = "StyleGAN API"
 version = "1.0.0"
 description = "Simplified Web REST API of the StyleGAN"
-lossy = false
 docs = true
 redoc = true
+lossy = false
 
 [server]
 gpu = false
@@ -16,25 +16,25 @@ forwarded_headers = ["X-Forwarded-For", "Forwarded"]
 
 [server.http.cors]
 enabled = false
-origins = ["*"]
+origins = []
 
 [server.limit]
 min_delay = 0.0
 
 [server.limit.block]
-enabled = true
+enabled = false
 timeout = 10
 poll = 0.25
 
 [server.limit.concurrency]
-enabled = true
+enabled = false
 max_concurrency = 8
 max_queue = 24
 timeout = 20
 poll = 0.1
 
 [server.limit.rate]
-enabled = true
+enabled = false
 window = 3600
 max_request = 200
 

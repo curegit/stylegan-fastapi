@@ -136,7 +136,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | ------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `file`        | string         | The path to the model file.                                                                                                                                        |
 | `relative`    | boolean        | Indicates whether the model file path is relative to this TOML file rather than the working directory. The default value is `false`.                               |
-| `name`        | string         | The display name of the model.                                                                                                                                     |
+| `name`        | string         | A display name of the model.                                                                                                                                     |
 | `description` | string         | A short description of the model.                                                                                                                                  |
 | `lossy`       | boolean        | Whether lossy compression is used. This overrides the `lossy` in the [General Settings](#general-settings-root).                                                   |
 | `gpu`         | boolean or int | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides the [ServerConfig](#serverconfig) `gpu`. |
@@ -153,11 +153,12 @@ workers = 3
 raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 ```
 
-### Example
+### Service Configuration Example
 
 #### `stylegan.service`
 
-`tmp_dir = "/run/stylegan"`
+When using
+set `tmp_dir = "/run/stylegan"` in StyleGAN FastAPI co better perfomance
 
 ```ini
 [Unit]
@@ -204,7 +205,7 @@ SocketMode=600
 WantedBy=sockets.target
 ```
 
-logrotate.d/stylegan
+#### `logrotate.d/stylegan`
 
 ```txt
 /var/log/stylegan/*.log {

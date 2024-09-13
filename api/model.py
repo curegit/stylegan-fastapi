@@ -140,6 +140,8 @@ class GeneratorModel:
 	@staticmethod
 	def load(filepath: Path, id: str, name: str, description: str, *, gpu: bool | int | None = None, lossy: bool | None = None):
 		generator = Generator.load(filepath)
-		logger.info(f"Loaded '{filepath}'")
+		logger.info(f"Loaded '{filepath}' as '{name}'")
 		device = get_device(gpu)
-		return GeneratorModel(generator, id, name, description, lossy=(config.lossy if lossy is None else lossy), device=device)
+		model = GeneratorModel(generator, id, name, description, lossy=(config.lossy if lossy is None else lossy), device=device)
+		logger.info(f"Model '{name}' is ready.")
+		return model

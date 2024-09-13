@@ -39,10 +39,10 @@ Please note that this setup is intended for trial or debugging purposes only and
 ## Application Configuration
 
 StyleGAN FastAPI can be customized by using a configuration file.
-StyleGAN FastAPI uses the TOML format for configuration, and the default TOML file is located in `default/config.toml`.
+StyleGAN FastAPI uses the TOML format for configuration, and the default server's TOML file is located in `default/config.toml`.
 
 You can specify a different configuration TOML file to use by setting the `STYLEGAN_TOML` environment variable.
-`STYLEGAN_TOML` must be an absolute path or a relative path to the TOML file from the working directory.
+`STYLEGAN_TOML` must be an absolute TOML file path or a TOML file path relative to the working directory.
 Note that the `STYLEGAN_TOML` environment variable must be set before importing the `api/` Python package.
 
 ```sh
@@ -53,93 +53,93 @@ uvicorn main:app
 ### Configuration TOML Specifications
 
 The configuration file follows the standard TOML format.
-A complete raw schema definition can be found in the Python file `api/conf.py`.
+A complete raw schema definition and its default values can be found in the `api/conf.py` Python file.
 
 All properties are optional except the `file` field in `ModelConfig` to specify model files, and you must specify at least one model.
 
-#### General Settings (Root table)
+#### General Settings (Root)
 
-| Key           | Type                                    | Description                                                                           |
-| ------------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
-| `title`       | string                                  | The title of the software.                                                            |
-| `version`     | string                                  | The version number of the software.                                                   |
-| `description` | string                                  | A brief description of the software.                                                  |
-| `lossy`       | boolean                                 | A boolean value indicating whether lossy compression is used. The default is `false`. |
-| `docs`        | boolean                                 | A boolean value indicating whether documentation is enabled.                          |
-| `redoc`       | boolean                                 | A boolean value indicating whether ReDoc is enabled.                                  |
-| `server`      | [ServerConfig](#serverconfig)           | Server configuration settings.                                                        |
-| `models`      | { string: [ModelConfig](#modelconfig) } | A dictionary of model configurations.                                                 |
+| Key           | Type                                    | Description                                                          |
+| ------------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `title`       | string                                  | The title of the API service. Used in the OpenAPI spec.              |
+| `version`     | string                                  | The version number of the API. Used in the OpenAPI spec.             |
+| `description` | string                                  | A brief description of the API service. Used in the OpenAPI spec.    |
+| `docs`        | boolean                                 | Whether the Swagger page is enabled. The default is `true`.          |
+| `redoc`       | boolean                                 | Whether the ReDoc page is enabled. The default is `true`.            |
+| `lossy`       | boolean                                 | Whether to use lossy compression for output. The default is `false`. |
+| `server`      | [ServerConfig](#serverconfig)           | Internal server configuration settings.                              |
+| `models`      | { string: [ModelConfig](#modelconfig) } | A dictionary of model configurations to use.                         |
 
 #### ServerConfig
 
-| Key       | Type                        | Description                                                   |
-| --------- | --------------------------- | ------------------------------------------------------------- |
-| `gpu`     | boolean or int              | A boolean or integer value indicating whether GPU is enabled. |
-| `logger`  | string                      | The name of the logger used.                                  |
-| `tmp_dir` | string                      | The path to the temporary directory.                          |
-| `http`    | [HTTPConfig](#httpconfig)   | HTTP configuration settings.                                  |
-| `limit`   | [LimitConfig](#limitconfig) | Limit configuration settings.                                 |
+| Key       | Type                        | Description                                                                                                              |
+| --------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `gpu`     | boolean or int              | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used.               |
+| `logger`  | string                      | The name of the parent logger from which this application's logger is derived.                                           |
+| `tmp_dir` | string                      | The path to the temporary directory where the runtime files are located. Volatile locations such as `tmpfs` are allowed. |
+| `http`    | [HTTPConfig](#httpconfig)   | HTTP configuration settings.                                                                                             |
+| `limit`   | [LimitConfig](#limitconfig) | Limit configuration settings.                                                                                            |
 
 #### HTTPConfig
 
-| Key                 | Type                      | Description                                                    |
-| ------------------- | ------------------------- | -------------------------------------------------------------- |
-| `forwarded`         | boolean                   | A boolean value indicating whether HTTP forwarding is enabled. |
-| `forwarded_headers` | [string]                  | A list of forwarded headers.                                   |
-| `cors`              | [CORSConfig](#corsconfig) | CORS configuration settings.                                   |
+| Key                 | Type                      | Description                                                                                                                                                                                                                                                                                                                    |
+| ------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `forwarded`         | boolean                   | Indicates whether reverse proxy servers are involved in the path of the requests. The default is `false`. You can leave this `false` if your middleware such as Uvicorn is configured to fill in real remote address info.                                                                                                     |
+| `forwarded_headers` | [string]                  | A list of headers to check for the original client address, such as "Forwarded" or "X-Forwarded-For", which can be multiple and is left in order. This is used for identifying clients when `forwarded` is true. Regardless of the header type, the entire string equivalence of the header value is used to identify clients. |
+| `cors`              | [CORSConfig](#corsconfig) | Cross-Origin Resource Sharing (CORS) configuration settings.                                                                                                                                                                                                                                                                   |
 
 #### CORSConfig
 
-| Key       | Type     | Description                                         |
-| --------- | -------- | --------------------------------------------------- |
-| `enabled` | boolean  | A boolean value indicating whether CORS is enabled. |
-| `origins` | [string] | A list of allowed origins.                          |
+| Key       | Type     | Description                                                                               |
+| --------- | -------- | ----------------------------------------------------------------------------------------- |
+| `enabled` | boolean  | A boolean value indicating whether CORS configuration is enabled. The default is `false`. |
+| `origins` | [string] | A list of allowed origins. Set `["*"]` for wildcard.                                      |
 
 #### LimitConfig
 
 | Key           | Type                                              | Description                                             |
 | ------------- | ------------------------------------------------- | ------------------------------------------------------- |
 | `min_delay`   | float                                             | The minimum response delay time for CPU-bound requests. |
-| `block`       | [SignallingBlockConfig](#signallingblockconfig)   | A block of settings for blocking requests.              |
-| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for concurrency.                    |
+| `block`       | [SignallingBlockConfig](#signallingblockconfig)   | A block of settings for the signalling block.           |
+| `concurrency` | [ConcurrencyLimitConfig](#concurrencylimitconfig) | A block of settings for the concurrency limit.          |
 | `rate`        | [RateLimitConfig](#ratelimitconfig)               | A block of settings for rate limiting.                  |
 
 #### SignallingBlockConfig
 
-| Key       | Type    | Description                                                     |
-| --------- | ------- | --------------------------------------------------------------- |
-| `enabled` | boolean | A boolean value indicating whether signalling block is enabled. |
-| `timeout` | float   | The timeout duration for signalling block.                      |
-| `poll`    | float   | The polling interval for signalling block.                      |
+| Key       | Type    | Description                                                                                                           |
+| --------- | ------- | --------------------------------------------------------------------------------------------------------------------- |
+| `enabled` | boolean | Whether the signalling block for CPU-bound requests (delaying simultaneous requests from the same client) is enabled. |
+| `timeout` | float   | The timeout duration in seconds for the signalling block.                                                             |
+| `poll`    | float   | The polling interval in seconds for the signalling block.                                                             |
 
 #### ConcurrencyLimitConfig
 
 | Key               | Type    | Description                                                      |
 | ----------------- | ------- | ---------------------------------------------------------------- |
-| `enabled`         | boolean | A boolean value indicating whether concurrency limit is enabled. |
+| `enabled`         | boolean | Whether the concurrency limit for CPU-bound requests is enabled. |
 | `max_concurrency` | int     | The maximum number of concurrent requests.                       |
 | `max_queue`       | int     | The maximum number of requests in the queue.                     |
-| `timeout`         | float   | The timeout duration for concurrency limit.                      |
-| `poll`            | float   | The polling interval for concurrency limit.                      |
+| `timeout`         | float   | The timeout duration in seconds for the concurrency limit.       |
+| `poll`            | float   | The polling interval in seconds for the concurrency limit.       |
 
 #### RateLimitConfig
 
-| Key           | Type    | Description                                                |
-| ------------- | ------- | ---------------------------------------------------------- |
-| `enabled`     | boolean | A boolean value indicating whether rate limit is enabled.  |
-| `window`      | float   | The time window for rate limiting.                         |
-| `max_request` | int     | The maximum number of requests allowed in the time window. |
+| Key           | Type    | Description                                                                         |
+| ------------- | ------- | ----------------------------------------------------------------------------------- |
+| `enabled`     | boolean | A boolean value indicating whether rate limiting for CPU-bound requests is enabled. |
+| `window`      | float   | The time window for rate limiting in seconds.                                       |
+| `max_request` | int     | The maximum number of requests allowed in the time window.                          |
 
 #### ModelConfig
 
-| Key           | Type           | Description                                                   |
-| ------------- | -------------- | ------------------------------------------------------------- |
-| `file`        | string         | The path to the model file.                                   |
-| `relative`    | boolean        | A boolean value indicating whether the path is relative.      |
-| `name`        | string         | The name of the model.                                        |
-| `description` | string         | A brief description of the model.                             |
-| `lossy`       | boolean        | A boolean value indicating whether lossy compression is used. |
-| `gpu`         | boolean or int | A boolean or integer value indicating whether GPU is enabled. |
+| Key           | Type           | Description                                                                                                                                                        |
+| ------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `file`        | string         | The path to the model file.                                                                                                                                        |
+| `relative`    | boolean        | Indicates whether the model file path is relative to this TOML file rather than the working directory. The default value is `false`.                               |
+| `name`        | string         | A display name of the model.                                                                                                                                     |
+| `description` | string         | A short description of the model.                                                                                                                                  |
+| `lossy`       | boolean        | Whether lossy compression is used. This overrides the `lossy` in the [General Settings](#general-settings-root).                                                   |
+| `gpu`         | boolean or int | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides the [ServerConfig](#serverconfig) `gpu`. |
 
 ## Gunicorn
 
@@ -153,26 +153,36 @@ workers = 3
 raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 ```
 
-### Example
+### Service Configuration Example
 
 #### `stylegan.service`
+
+When using
+set `tmp_dir = "/run/stylegan"` in StyleGAN FastAPI co better perfomance
 
 ```ini
 [Unit]
 Description=Gunicorn StyleGAN Daemon
 Requires=stylegan.socket
 After=network.target
+After=syslog.target
 
 [Service]
 Type=notify
 User=spam
 Group=spam
 WorkingDirectory=/home/spam/stylegan
-ExecStart=/usr/local/bin/python3.12 -B -m gunicorn -c gunicorn.config.py
+ExecStart=/usr/local/bin/python3.12 -B -m gunicorn -c gunicorn.conf.py \
+                                                   --log-level info \
+                                                   --log-file /var/log/stylegan/system.log \
+                                                   --access-logfile /var/log/stylegan/access.log \
+                                                   --capture-output
 RuntimeDirectory=stylegan
+LogsDirectory=stylegan
 PrivateTmp=true
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
+TimeoutStartSec=240
 TimeoutStopSec=30
 Restart=always
 
@@ -193,6 +203,21 @@ SocketMode=600
 
 [Install]
 WantedBy=sockets.target
+```
+
+#### `logrotate.d/stylegan`
+
+```txt
+/var/log/stylegan/*.log {
+  monthly
+  dateformat -%Y-%m-%d
+  rotate 12
+  compress
+  ifempty
+  missingok
+  copytruncate
+  maxsize 100M
+}
 ```
 
 ## Notes

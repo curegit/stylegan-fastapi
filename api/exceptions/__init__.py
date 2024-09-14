@@ -32,7 +32,11 @@ class Raises[T, **P](Protocol):
 
 def raises[T, **P](*exceptions: type[HTTPException]):
 	def decorator(function: Callable[P, T]) -> Raises[T, P]:
-		function.raises = list(exceptions)
+		try:
+			function.raises
+		except AttributeError:
+			function.raises = []
+		function.raises = [*function.raises, *exceptions]
 		return function
 	return decorator
 

@@ -3,11 +3,13 @@
 Simplified Web REST API of the StyleGAN using FastAPI
 
 This is a web backend application to make the generator models trained by [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada) available on the web in a simplified way.
-[StyleGAN Vue](https://github.com/curegit/stylegan-vue) is a sample implementation of its frontend client and is [deployed here](https://stylegan.curegit.jp/) connected to [a demo backend with some models](https://stylegan.mermaid.blue/docs) for immediate trial.
+[StyleGAN Vue](https://github.com/curegit/stylegan-vue) is a sample implementation of its frontend client and is [deployed here](https://stylegan.curegit.jp/) connected to [a demo backend](https://stylegan.mermaid.blue/docs) with some models for immediate trial.
+
+[Sample Docker configurations](https://github.com/curegit/stylegan-web) for deploying StyleGAN models and the web-based user interface are also available.
 
 ## API Specifications
 
-Refer to the Swagger or ReDoc documentation on the sample backend or on your deployed instance at the paths `/docs` or `/redoc`.
+Refer to the [Swagger](https://stylegan.mermaid.blue/docs) or [ReDoc](https://stylegan.mermaid.blue/redoc) documentation on the sample backend or on your deployed instance at the paths `/docs` or `/redoc`.
 
 ## Application Requirements
 
@@ -136,7 +138,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | ------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `file`        | string         | The path to the model file.                                                                                                                                        |
 | `relative`    | boolean        | Indicates whether the model file path is relative to this TOML file rather than the working directory. The default value is `false`.                               |
-| `name`        | string         | A display name of the model.                                                                                                                                     |
+| `name`        | string         | A display name of the model.                                                                                                                                       |
 | `description` | string         | A short description of the model.                                                                                                                                  |
 | `lossy`       | boolean        | Whether lossy compression is used. This overrides the `lossy` in the [General Settings](#general-settings-root).                                                   |
 | `gpu`         | boolean or int | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides the [ServerConfig](#serverconfig) `gpu`. |

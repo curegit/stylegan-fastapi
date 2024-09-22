@@ -3,7 +3,7 @@
 Simplified Web REST API of the StyleGAN using FastAPI
 
 This is a web backend application to make the generator models trained by [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada) available on the web in a simplified way.
-[StyleGAN Vue](https://github.com/curegit/stylegan-vue) is a sample implementation of its frontend client and is [deployed here](#) connected to [a demo backend with some models](#) for immediate trial.
+[StyleGAN Vue](https://github.com/curegit/stylegan-vue) is a sample implementation of its frontend client and is [deployed here](https://stylegan.curegit.jp/) connected to [a demo backend with some models](https://stylegan.mermaid.blue/docs) for immediate trial.
 
 ## API Specifications
 

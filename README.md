@@ -143,9 +143,13 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 | `lossy`       | boolean        | Whether lossy compression is used. This overrides the `lossy` in the [General Settings](#general-settings-root).                                                   |
 | `gpu`         | boolean or int | A boolean indicating whether GPU is enabled or an integer value specifying which GPU device is being used. This overrides the [ServerConfig](#serverconfig) `gpu`. |
 
-## Gunicorn
+## Gunicorn Tips
 
-`logger = "gunicorn.error"`
+### Merge Application Log with Gunicorn Log
+
+Set `logger = "gunicorn.error"` in the StyleGAN FastAPI TOML
+
+### Inherit Default Gunicorn Settings from `guni/conf.py`
 
 ```py
 from guni.conf import *
@@ -155,12 +159,9 @@ workers = 3
 raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 ```
 
-### Service Configuration Example
+## Service Configuration Example
 
-#### `stylegan.service`
-
-When using
-set `tmp_dir = "/run/stylegan"` in StyleGAN FastAPI co better perfomance
+### `stylegan.service`
 
 ```ini
 [Unit]
@@ -174,11 +175,11 @@ Type=notify
 User=spam
 Group=spam
 WorkingDirectory=/home/spam/stylegan
-ExecStart=/usr/local/bin/python3.12 -B -m gunicorn -c gunicorn.conf.py \
-                                                   --log-level info \
-                                                   --log-file /var/log/stylegan/system.log \
-                                                   --access-logfile /var/log/stylegan/access.log \
-                                                   --capture-output
+ExecStart=/usr/local/bin/python3.12 -m gunicorn -c gunicorn.conf.py \
+                                                --log-level info \
+                                                --log-file /var/log/stylegan/system.log \
+                                                --access-logfile /var/log/stylegan/access.log \
+                                                --capture-output
 RuntimeDirectory=stylegan
 LogsDirectory=stylegan
 PrivateTmp=true
@@ -191,6 +192,8 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+If the volatile `/run` location is available via `RuntimeDirectory`, it is recommended to set as `tmp_dir = "/run/stylegan"` in the StyleGAN FastAPI TOML for improved performance.
 
 #### `stylegan.socket`
 

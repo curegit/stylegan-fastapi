@@ -145,11 +145,11 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 ## Gunicorn Tips
 
-### Merge Application Log with Gunicorn Log
+### Merge Application Log into Gunicorn Log
 
-Set `logger = "gunicorn.error"` in the StyleGAN FastAPI TOML
+To merge the application log into the Gunicorn log, set `logger = "gunicorn.error"` in the StyleGAN FastAPI TOML configuration file.
 
-### Inherit Default Gunicorn Settings from `guni/conf.py`
+### Inherit Gunicorn Settings from `guni/conf.py`
 
 ```py
 from guni.conf import *

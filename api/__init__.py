@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, str(utils.file_rel_path("../core", strict=True)))
 del sys
 
-# Prolong the life of legacy modules
+# Prolong the life of legacy modules (Monkey patching)
 import cure
 cure.patch()
 del cure

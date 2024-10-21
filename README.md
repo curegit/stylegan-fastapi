@@ -149,7 +149,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 To merge the application log into the Gunicorn log, set `logger = "gunicorn.error"` in the StyleGAN FastAPI TOML configuration file.
 
-### Inherit Gunicorn Settings from `guni/conf.py`
+### Derive Gunicorn Settings from `guni/conf.py`
 
 ```py
 from guni.conf import *
@@ -193,7 +193,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-If the volatile `/run` location is available via `RuntimeDirectory`, it is recommended to set as `tmp_dir = "/run/stylegan"` in the StyleGAN FastAPI TOML for improved performance.
+If the volatile `/run` location is available via `RuntimeDirectory`, it is recommended to set as `tmp_dir = "/run/stylegan"` in the StyleGAN FastAPI TOML for improved disk IO performance.
 
 #### `stylegan.socket`
 

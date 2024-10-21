@@ -151,6 +151,8 @@ To merge the application log into the Gunicorn log, set `logger = "gunicorn.erro
 
 ### Derive Gunicorn Settings from `guni/conf.py`
 
+You can customize how Gunicorn runs the application by overriding various options derived from sample Gunicorn settings.
+
 ```py
 from guni.conf import *
 

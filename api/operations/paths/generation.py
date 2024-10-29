@@ -18,6 +18,9 @@ async def generate(
 	latent: ndarray | None = Depends(optional_latent),
 	sd: float = Depends(sd),
 ):
+	"""
+	Generates an image using the specified model and parameters.
+	"""
 	async with SpeedLimit():
 		latent_str, style, image, label_str = await to_thread(
 			model.generate_encoded,

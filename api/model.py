@@ -1,3 +1,4 @@
+from random import choice
 from pathlib import Path
 from PIL.Image import Image
 from numpy import ndarray
@@ -44,6 +45,7 @@ class GeneratorModel:
 		self.xp = generator.xp
 		logger.info(f"Calculating the mean W for '{name}' ...")
 		self.mean_ws = [generator.calculate_mean_w(categories=[c]) for c in range(self.generator.categories)]
+		self.examples = [self.generate_encoded()[2] for _ in range(5)]
 
 	def generate_latent(self, *, mean: ndarray | None = None, sd: float = 1.0) -> Variable:
 		return self.generator.generate_latents(1, center=mean, sd=sd)
@@ -135,6 +137,7 @@ class GeneratorModel:
 			height=self.height,
 			lossy=self.lossy,
 			mimeType=self.image_type,
+			example=choice(self.examples),
 		)
 
 	@staticmethod

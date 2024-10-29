@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from api.types import Base64, base64_examples
 from api.image import png_mime_type
 
 class Model(BaseModel):
@@ -11,3 +12,4 @@ class Model(BaseModel):
 	height: int = Field(ge=1, examples=[256])
 	lossy: bool = Field(examples=[False])
 	mimeType: str = Field(examples=[png_mime_type])
+	example: Base64 = Field(examples=[next(base64_examples)])

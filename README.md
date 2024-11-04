@@ -161,6 +161,15 @@ workers = 3
 raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 ```
 
+### With CUDA/CuPy
+
+There are a few limitations specific to CUDA/CuPy:
+
+Due to the limitation of CUDA, processes cannot be forked after CUDA initialization.
+You have to use `preload = False` to make CUDA initialized on the each forked process after Gunicorn forks child processes. (This require more RAM/VRAM)
+
+If RAM/VRAM matters, consider simply using Uvicorn even for production.
+
 ## Service Configuration Example
 
 ### `stylegan.service`

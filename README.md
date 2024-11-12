@@ -161,14 +161,15 @@ workers = 3
 raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 ```
 
-### With CUDA/CuPy
+### Using CUDA/CuPy with Gunicorn
 
-There are a few limitations specific to CUDA/CuPy:
+There are certain limitations when using CUDA/CuPy:
 
-Due to the limitation of CUDA, processes cannot be forked after CUDA initialization.
-You have to use `preload = False` to make CUDA initialized on the each forked process after Gunicorn forks child processes. (This require more RAM/VRAM)
+CUDA has a restriction that prevents processes from being forked after CUDA has been initialized.
+To address this, set `preload = False` in Gunicorn settings so that CUDA is initialized in each forked process after Gunicorn creates child processes.
+Note that this approach will consume more RAM/VRAM.
 
-If RAM/VRAM matters, consider simply using Uvicorn even for production.
+If RAM/VRAM usage is a concern, it may be advisable to use Uvicorn alone even in production environments.
 
 ## Service Configuration Example
 

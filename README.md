@@ -163,7 +163,7 @@ raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 
 ### Using CUDA/CuPy with Gunicorn
 
-There are certain limitations when using CUDA/CuPy:
+There are certain limitations when using CUDA/CuPy.
 
 CUDA has a restriction that prevents processes from being forked after CUDA has been initialized.
 To address this, set `preload = False` in Gunicorn settings so that CUDA is initialized in each forked process after Gunicorn creates child processes.

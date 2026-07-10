@@ -196,7 +196,7 @@ class RateLimiter:
 					try:
 						await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
 					except sqlite3.IntegrityError:
-						# Ignore raced inserts
+						# Loser proceeds without incrementing; allows raced first-insert
 						pass
 			except RateLimitException:
 				await connection.commit()

@@ -193,7 +193,11 @@ class RateLimiter:
 						else:
 							await connection.execute("UPDATE request SET count = ? WHERE id = ?", (count + 1, self.id))
 				else:
-					await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
+					try:
+						await connection.execute("INSERT INTO request(id, time, count) VALUES(?, ?, ?)", (self.id, now, 1))
+					except sqlite3.IntegrityError:
+						# Ignore raced inserts
+						pass
 			except RateLimitException:
 				await connection.commit()
 				raise

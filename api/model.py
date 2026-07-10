@@ -50,16 +50,16 @@ class GeneratorModel:
 	def generate_latent(self, *, mean: ndarray | None = None, sd: float = 1.0) -> Variable:
 		return self.generator.generate_latents(1, center=mean, sd=sd)
 
-	def generate_condition(self, *, category: int | None) -> tuple[Variable, str] | tuple[None, None]:
+	def generate_condition(self, *, category: int | None) -> tuple[Variable, str, int] | tuple[None, None, int]:
 		if self.generator.conditional:
 			k, c = self.generator.generate_conditions(1, categories=(None if category is None else [category]))
-			return c, self.generator.labels[k[0]]
-		return None, None
+			return c, self.generator.labels[k[0]], k[0]
+		return None, None, 0
 
 	def generate(self, *, category: int | None = None, psi: float = 1.0, mean: ndarray | None = None, sd: float = 1.0) -> tuple[ndarray, ndarray, Image, str | None]:
 		z = self.generate_latent(mean=mean, sd=sd)
-		c, label = self.generate_condition(category=category)
-		(w, *ws), y = self.generator(z, c, psi=psi)
+		c, label, k = self.generate_condition(category=category)
+		(w, *ws), y = self.generator(z, c, psi=psi, mean_w=self.mean_ws[k])
 		z.to_cpu()
 		w.to_cpu()
 		y.to_cpu()

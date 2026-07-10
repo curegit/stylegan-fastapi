@@ -59,7 +59,9 @@ class SignallingBlock:
 		self.lock.release()
 
 
-# Crude concurrency control to limit computing power usage
+# Crude, file-based concurrency control to limit computing power usage.
+# Failed lock acquisition (TOCTTOU) still allows the request to proceed; this loose
+# guarantee is an intentional trade-off to keep the implementation simple.
 class ConcurrencyLimiter:
 
 	lock_dir_path: Path = resolve_path(config.server.tmp_dir).joinpath("lock")

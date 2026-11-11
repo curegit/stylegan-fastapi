@@ -241,6 +241,8 @@ WantedBy=sockets.target
 
 - Ensure that proxy headers, if used, are set correctly (e.g., Forwarded, X-Forwarded-For) for production environments with a reverse proxy layer.
 - It is also recommended to set header and body size limits via Gunicorn or a reverse proxy.
+- Rate limiting is approximate: rare concurrent requests may be undercounted.
+  This trade-off keeps compute throttling simple; it is not a strict quota guarantee.
 
 ## License
 

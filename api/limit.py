@@ -153,7 +153,11 @@ class ConcurrencyLimiter:
 				pass
 
 
-# Fixed window-based rate limiter
+# Fixed window-based rate limiter with intentionally approximate accounting.
+# Rare overlapping checks may read the same count and overwrite an increment,
+# or race to insert the first row and proceed without charging every request.
+# This is accepted for compute throttling: strict atomic admission would add
+# complexity disproportionate to the risk. This is not a hard quota guarantee.
 class RateLimiter:
 
 	dir_path: Path = resolve_path(config.server.tmp_dir)

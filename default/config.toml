@@ -40,27 +40,27 @@ max_request = 200
 
 [models]
 [models.ffhq]
-file = "../core/models/ffhq.hdf5"
+file = "../core/models/ffhq.pt"
 relative = true
 name = "FFHQ"
 description = "Flickr-Faces-HQ"
 lossy = true
 
 [models.afhq]
-file = "../core/models/afhq.hdf5"
+file = "../core/models/afhq.pt"
 relative = true
 name = "AFHQ"
 description = "Animal Faces-HQ"
 lossy = true
 
 [models.anime]
-file = "../core/models/anime.hdf5"
+file = "../core/models/anime.pt"
 relative = true
 name = "Anime"
 description = "Anime Faces"
 
 [models.mnist]
-file = "../core/models/mnist.hdf5"
+file = "../core/models/mnist.pt"
 relative = true
 name = "MNIST"
 description = "Hand-written grayscale digits from 0-9"
@@ -68,7 +68,7 @@ lossy = false
 gpu = false
 
 [models.k49]
-file = "../core/models/k49.hdf5"
+file = "../core/models/k49.pt"
 relative = true
 name = "Kuzushiji-49"
 description = "48 Hiragana characters and one Hiragana iteration mark"

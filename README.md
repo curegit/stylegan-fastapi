@@ -2,7 +2,7 @@
 
 Simplified Web REST API of the StyleGAN using FastAPI
 
-This is a web backend application to make the generator models trained by [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada) available on the web in a simplified way.
+This is a web backend application to make the generator models trained by [Precure StyleGAN (PyTorch)](https://github.com/curegit/precure-stylegan-torch) available on the web in a simplified way.
 [StyleGAN Vue](https://github.com/curegit/stylegan-vue) is a sample implementation of its frontend client and is [deployed here](https://stylegan.curegit.jp/) connected to [a demo backend](https://stylegan.mermaid.blue/docs) with some models for immediate trial.
 
 [Sample Docker configurations](https://github.com/curegit/stylegan-web) for deploying StyleGAN models and the web-based user interface are also available.
@@ -15,9 +15,11 @@ Refer to the [Swagger](https://stylegan.mermaid.blue/docs) or [ReDoc](https://st
 
 To run this application, you need a Unix-like system with Python >= 3.14 installed.
 
-Use the `requirements.txt` to install the minimal dependencies for serving and inferencing, including the dependencies of [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada).
+The `core/` Git submodule provides the PyTorch implementation.
+Initialize it before installing `requirements.txt`, which includes `core/requirements.txt` and only requires the inference dependencies:
 
 ```sh
+git submodule update --init --recursive
 pip3 install -r requirements.txt
 ```
 
@@ -34,6 +36,12 @@ git clone --recursive https://github.com/curegit/stylegan-fastapi.git
 cd stylegan-fastapi
 pip3 install -r requirements.txt
 python3 -m uvicorn main:app
+```
+
+To start with only the small MNIST model:
+
+```sh
+STYLEGAN_TOML=default/config.min.toml python3 -m uvicorn main:app
 ```
 
 Please note that this setup is intended for trial or debugging purposes only and is not suitable for production use as it does not support process replication.
@@ -136,7 +144,7 @@ All properties are optional except the `file` field in `ModelConfig` to specify 
 
 | Key           | Type           | Description                                                                                                                                                        |
 | ------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `file`        | string         | The path to the model file.                                                                                                                                        |
+| `file`        | string         | The path to a standalone PyTorch Generator checkpoint (`.pt`).                                                                                                      |
 | `relative`    | boolean        | Indicates whether the model file path is relative to this TOML file rather than the working directory. The default value is `false`.                               |
 | `name`        | string         | A display name of the model.                                                                                                                                       |
 | `description` | string         | A short description of the model.                                                                                                                                  |
@@ -161,12 +169,12 @@ workers = 3
 raw_env = ["STYLEGAN_TOML=myconfig.toml"]
 ```
 
-### Using CUDA/CuPy with Gunicorn
+### Using CUDA/PyTorch with Gunicorn
 
-There are certain limitations when using CUDA/CuPy.
+There are certain limitations when using CUDA/PyTorch.
 
 CUDA has a restriction that prevents processes from being forked after CUDA has been initialized.
-To address this, set `preload = False` in Gunicorn settings so that CUDA is initialized in each forked process after Gunicorn creates child processes.
+To address this, override `preload_app = False` in Gunicorn settings so that CUDA is initialized in each forked process after Gunicorn creates child processes.
 Note that this approach will consume more RAM/VRAM.
 
 If RAM/VRAM usage is a concern, it may be advisable to use Uvicorn alone even in production environments.

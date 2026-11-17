@@ -8,12 +8,6 @@ import sys
 sys.path.insert(0, str(utils.file_rel_path("../core", strict=True)))
 del sys
 
-# Prolong the life of legacy modules (Guerrilla patching)
-import cure
-
-cure.patch()
-del cure
-
 # Read configuration and define at top level
 config: conf.Config = conf.load_config(env.toml_path)
 
@@ -30,12 +24,6 @@ del sys
 
 # Create the runtime directory
 utils.mkdirp(config.server.tmp_dir)
-
-# Optimize Chainer
-import utilities.chainer
-
-utilities.chainer.config_valid(faster=True)
-del utilities
 
 # Load all generator models in use
 from api import model

@@ -1,27 +1,28 @@
 from typing import TypedDict, Any
 from pydantic import BaseModel
 
+
 class HTTPError(BaseModel):
-	detail: Any = None
+    detail: Any = None
 
 
 class NotFoundError(TypedDict):
-	type: str
-	name: str
-	msg: str
+    type: str
+    name: str
+    msg: str
 
 
 class HTTPNotFoundError(HTTPError):
-	detail: NotFoundError | None = None
+    detail: NotFoundError | None = None
 
 
 class DeserializationError(HTTPError):
-	detail: str | None = None
+    detail: str | None = None
 
 
 class EntityValidationError(HTTPError):
-	pass
+    pass
 
 
 class RequestLimitError(HTTPError):
-	detail: str | None = None
+    detail: str | None = None

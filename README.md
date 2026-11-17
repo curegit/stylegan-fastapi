@@ -13,7 +13,7 @@ Refer to the [Swagger](https://stylegan.mermaid.blue/docs) or [ReDoc](https://st
 
 ## Application Requirements
 
-To run this application, you need a Unix-like system with Python >= 3.12 installed.
+To run this application, you need a Unix-like system with Python >= 3.14 installed.
 
 Use the `requirements.txt` to install the minimal dependencies for serving and inferencing, including the dependencies of [Precure StyleGAN ADA](https://github.com/curegit/precure-stylegan-ada).
 
